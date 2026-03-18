@@ -239,7 +239,6 @@
         // ==========================================
         // --- KONFIGURASI API GITHUB PAGES ---
         // ==========================================
-        // URL API TELAH DIPERBARUI
         const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxOIMqEzp62jZJKfPxTcGiCqlqrM_0fnPRbaFevw6xtIuus-B5ALJKLKGCDZG7gpAfnkA/exec"; 
 
         const apiCall = async (action, data = {}) => {
@@ -1631,7 +1630,7 @@
                                 </button>
                                 
                                 {(presenceType !== 'Izin' && selectedDuration !== 'Khusus' && selectedDuration !== 'Ekstra' && isOutOfRange) && (
-                                    <p className="text-rose-400 text-[9px] font-bold uppercase tracking-widest text-center mt-3"><i className="fas fa-exclamation-triangle mr-1"></i> Anda berada di luar radius kantor (> 500m)</p>
+                                    <p className="text-rose-400 text-[9px] font-bold uppercase tracking-widest text-center mt-3"><i className="fas fa-exclamation-triangle mr-1"></i> Anda berada di luar radius kantor (&gt; 500m)</p>
                                 )}
                             </div>
                         </div>
