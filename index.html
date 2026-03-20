@@ -992,6 +992,8 @@
             const handleToggleBiometric = () => { const newState = !biometricEnabled; setBiometricEnabled(newState); localStorage.setItem('dppi_biometric_enabled', newState); };
 
             useEffect(() => { if (currentUser) syncData(); }, [currentUser]);
+            
+            // --- EFEK CAMERA SAAT MASUK KE ATTENDANCE VIEW ---
             useEffect(() => {
                 if (view === 'attendance') startCamera(); else stopCamera();
                 return () => stopCamera();
@@ -1080,9 +1082,10 @@
                 } else { setTodayStatus('none'); }
             }, [presences]);
 
+            // --- EFEK GPS MAP ---
             useEffect(() => {
                 let watchId = null;
-                if (view === 'attendance') {
+                if (view === 'attendance' && presenceType !== 'Izin') {
                     if (navigator.geolocation) {
                         watchId = navigator.geolocation.watchPosition(
                             (pos) => {
@@ -1140,7 +1143,7 @@
             };
 
             useEffect(() => {
-                if (view === 'attendance') {
+                if (view === 'attendance' && presenceType !== 'Izin') {
                     const initMap = () => {
                         const container = document.getElementById('user-map');
                         if (!container || mapUserRef.current) return;
@@ -1348,7 +1351,7 @@
                     .catch(err => { setIsLoading(false); alert("Error: " + err.message); });
             };
 
-            const isLocationMissing = coords.lat === null || coords.lng === null || coords.lat === 'Err';
+            const isLocationMissing = presenceType !== 'Izin' && (coords.lat === null || coords.lng === null || coords.lat === 'Err');
 
             const doAbsen = () => {
                 if (isLocationMissing) return alert("Lokasi belum ditemukan! Tunggu hingga koordinat muncul. Pastikan GPS aktif.");
@@ -1788,6 +1791,123 @@
                             </form>
                         </div>
                     )}
+
+                    {/* --- HALAMAN ATTENDANCE (PRESENSI) YANG SEBELUMNYA HILANG --- */}
+                    {view === 'attendance' && (
+                        <div className="w-full max-w-md animate-in">
+                            <div className="os-window p-6 md:p-8 rounded-[2.5rem] border border-white/5 shadow-2xl relative">
+                                <button onClick={resetToDashboard} className="absolute top-5 left-5 text-slate-400 hover:text-white transition-colors z-10 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-black/40 px-3 py-1.5 rounded-full">
+                                    <i className="fas fa-arrow-left"></i> Kembali
+                                </button>
+
+                                <h2 className="text-2xl font-black mb-6 text-center text-white uppercase tracking-widest mt-8">
+                                    Presensi <span className="text-orange-500">{presenceType}</span>
+                                </h2>
+                                {selectedShift && presenceType !== 'Izin' && (
+                                    <p className="text-center text-orange-400 text-[10px] font-black uppercase tracking-widest mb-4 bg-orange-500/10 py-1.5 rounded-lg border border-orange-500/20">{selectedShift}</p>
+                                )}
+
+                                {/* Bagian Kamera */}
+                                <div className="mb-6 relative">
+                                    <div className="video-container shadow-2xl bg-black flex items-center justify-center relative overflow-hidden rounded-2xl border border-white/10">
+                                        {!cameraFailed && !fallbackImage ? (
+                                            <>
+                                                <video ref={videoRef} id="video-element" autoPlay playsInline muted className="w-full h-full object-cover"></video>
+                                                {isRequestingCamera && <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-10"><div className="loader mb-2 border-black/20 border-t-orange-500"></div><span className="text-xs text-orange-400 font-bold uppercase tracking-widest">Akses Kamera...</span></div>}
+                                            </>
+                                        ) : fallbackImage ? (
+                                            <img src={fallbackImage} alt="Fallback" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="text-center p-6 bg-rose-900/20 text-rose-400 flex flex-col items-center justify-center w-full h-full">
+                                                <i className="fas fa-exclamation-triangle text-3xl mb-3"></i>
+                                                <p className="text-xs font-bold mb-4">{cameraErrorMsg || "Kamera tidak tersedia."}</p>
+                                                <label className="cursor-pointer bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-white text-[10px] font-black uppercase tracking-widest transition-all border border-white/20">
+                                                    <i className="fas fa-upload mr-2"></i>Ambil Foto Manual
+                                                    <input type="file" accept="image/*" capture="user" onChange={handleNativeCamera} className="hidden" />
+                                                </label>
+                                            </div>
+                                        )}
+                                        {!cameraFailed && !fallbackImage && (
+                                            <div className="absolute inset-0 pointer-events-none border-[2px] border-dashed border-white/30 m-6 rounded-3xl"></div>
+                                        )}
+                                    </div>
+                                    {!cameraFailed && !fallbackImage && (
+                                        <p className="text-[9px] text-slate-400 text-center mt-2 uppercase tracking-widest font-bold"><i className="fas fa-info-circle mr-1 text-orange-400"></i> Pastikan wajah dan lokasi terlihat jelas</p>
+                                    )}
+                                </div>
+
+                                {/* Bagian Peta GPS */}
+                                {presenceType !== 'Izin' && (
+                                    <div className="mb-6">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest"><i className="fas fa-map-marker-alt text-orange-500 mr-1"></i> Lokasi GPS</p>
+                                            <button onClick={handleRefreshGPS} className="text-[9px] bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded font-bold uppercase tracking-wider transition-colors border border-white/10"><i className="fas fa-sync-alt mr-1"></i>Refresh</button>
+                                        </div>
+                                        {locationErrorMsg ? (
+                                            <div className="bg-rose-500/10 border border-rose-500/30 p-4 rounded-xl text-center">
+                                                <p className="text-[10px] text-rose-400 font-bold uppercase mb-1"><i className="fas fa-satellite-dish mr-1"></i> Sinyal GPS Hilang</p>
+                                                <p className="text-[9px] text-slate-400">{locationErrorMsg}</p>
+                                            </div>
+                                        ) : (
+                                            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-lg bg-slate-900">
+                                                <div id="user-map" className="w-full h-[150px]"></div>
+                                                <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-md px-3 py-2 rounded-lg border border-white/10 z-[400] flex flex-col gap-1 text-right shadow-xl pointer-events-none">
+                                                    <div className="text-[9px] font-black uppercase text-slate-300">Akurasi: <span className={coords.accuracy > 100 ? 'text-rose-400' : 'text-emerald-400'}>{coords.accuracy ? Math.round(coords.accuracy) + 'm' : '...'}</span></div>
+                                                    <div className="text-[9px] font-black uppercase text-slate-300">Jarak: <span className={distanceToTarget > 0.5 && !currentUser?.bypassGeo ? 'text-amber-400' : 'text-blue-400'}>{distanceToTarget ? distanceToTarget.toFixed(2) + ' km' : '...'}</span></div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Input Keterangan / Alasan */}
+                                {(presenceType === 'Izin' || selectedDuration === 'Khusus' || selectedDuration === 'Ekstra') && (
+                                    <div className="mb-6">
+                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
+                                            {presenceType === 'Izin' ? 'Alasan Izin' : `Detail Tugas ${selectedDuration}`} <span className="text-rose-500">*</span>
+                                        </label>
+                                        <textarea
+                                            value={permitReason}
+                                            onChange={(e) => setPermitReason(e.target.value)}
+                                            className="w-full p-4 os-input rounded-2xl text-xs resize-none h-24 shadow-inner"
+                                            placeholder={presenceType === 'Izin' ? "Sakit / Cuti / Urusan Keluarga..." : "Tuliskan laporan tugas singkat..."}
+                                            required
+                                        ></textarea>
+                                    </div>
+                                )}
+
+                                {/* Peringatan GPS */}
+                                {isOutOfRange && presenceType !== 'Izin' && (
+                                    <div className="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl mb-6 text-center animate-pulse">
+                                        <p className="text-[9px] text-amber-400 font-bold uppercase tracking-widest"><i className="fas fa-exclamation-triangle mr-1"></i> Di Luar Radius Kantor (&gt;500m)</p>
+                                    </div>
+                                )}
+                                {isGpsPoor && presenceType !== 'Izin' && (
+                                    <div className="bg-rose-500/10 border border-rose-500/30 p-3 rounded-xl mb-6 text-center animate-pulse">
+                                        <p className="text-[9px] text-rose-400 font-bold uppercase tracking-widest"><i className="fas fa-signal mr-1"></i> GPS Lemah. Cari area terbuka.</p>
+                                    </div>
+                                )}
+
+                                {/* Tombol Submit */}
+                                <button
+                                    onClick={doAbsen}
+                                    disabled={isLoading || (presenceType !== 'Izin' && isLocationMissing)}
+                                    className={`w-full py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-2xl flex items-center justify-center gap-2 ${
+                                        isLoading || (presenceType !== 'Izin' && isLocationMissing) ? 'btn-disabled opacity-50 cursor-not-allowed' : 'btn-orange hover:scale-[1.02]'
+                                    }`}
+                                >
+                                    {isLoading ? (
+                                        <><div className="loader border-black/20 border-t-black w-4 h-4 border-2"></div> MENGIRIM DATA...</>
+                                    ) : (presenceType !== 'Izin' && isLocationMissing) ? (
+                                        <><i className="fas fa-location-crosshairs animate-spin text-orange-400"></i> MENCARI LOKASI GPS...</>
+                                    ) : (
+                                        <><i className="fas fa-fingerprint"></i> KONFIRMASI {presenceType}</>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                    {/* --- BATAS HALAMAN ATTENDANCE --- */}
 
                     {view === 'dashboard' && currentUser && (
                         <div className="w-full max-w-6xl animate-in flex flex-col gap-6 h-full pb-10">
