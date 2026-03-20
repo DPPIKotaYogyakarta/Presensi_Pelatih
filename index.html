@@ -1972,32 +1972,41 @@
                     {view === 'dashboard' && currentUser && (
                         <div className="w-full max-w-6xl animate-in flex flex-col gap-4 sm:gap-6 h-full pb-10">
                             {/* --- DASHBOARD HEADER --- */}
-                            <div className="os-window p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] flex justify-between items-center shadow-lg border border-white/5 relative">
-                                <div className="flex items-center gap-3 md:gap-4 cursor-pointer group flex-1 min-w-0 pr-2" onClick={openProfileModal} title="Klik untuk Edit Profil">
+                            <div className="os-window p-2.5 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] flex justify-between items-center shadow-lg border border-white/5 relative">
+                                
+                                {/* 1. BAGIAN KIRI (PROFIL) */}
+                                <div className="flex items-center gap-2 sm:gap-4 cursor-pointer group flex-1 min-w-0 pr-1 sm:pr-4" onClick={openProfileModal} title="Klik untuk Edit Profil">
                                     <div className="relative shrink-0">
-                                         <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl border-2 border-orange-400/20 overflow-hidden bg-black group-hover:border-orange-400 transition-all shadow-xl">
+                                         <div className="w-9 h-9 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl border-2 border-orange-400/20 overflow-hidden bg-black group-hover:border-orange-400 transition-all shadow-xl">
                                              <img src={currentUser.profilePic} className="w-full h-full object-cover" alt="Avatar" />
                                          </div>
-                                         <div className="absolute -bottom-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-orange-500 rounded-full flex items-center justify-center text-black text-[7px] md:text-[8px] border border-black shadow-sm group-hover:scale-110 transition-transform">
+                                         <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 sm:w-5 sm:h-5 bg-orange-500 rounded-full flex items-center justify-center text-black text-[6px] sm:text-[8px] border border-black shadow-sm group-hover:scale-110 transition-transform">
                                              <i className="fas fa-pen"></i>
                                          </div>
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                            <h2 className="font-extrabold text-white text-sm md:text-lg group-hover:text-orange-400 transition-colors truncate">{currentUser.fullName}</h2>
-                                            <div className="flex items-center gap-1.5 md:gap-2">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                                                <p className="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-[0.1em] md:tracking-[0.2em] truncate">{currentUser.position}</p>
+                                            <h2 className="font-extrabold text-white text-[11px] sm:text-lg group-hover:text-orange-400 transition-colors truncate">{currentUser.fullName}</h2>
+                                            <div className="flex items-center gap-1 sm:gap-2 mt-0.5">
+                                                <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                                                <p className="text-[7px] sm:text-[10px] text-slate-400 uppercase font-bold tracking-widest sm:tracking-[0.2em] truncate">{currentUser.position}</p>
                                             </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2 md:gap-4 shrink-0">
-                                    <div className="flex flex-col items-center mr-2 md:mr-3 md:border-l md:border-white/10 pl-2 md:pl-4 hidden sm:flex">
-                                            <img src={logoUrl} alt="Logo" className="h-8 w-8 md:h-12 md:w-12 object-contain logo-hologram" />
-                                            <span className="text-[6px] md:text-[7px] text-orange-400/60 font-black uppercase mt-1 tracking-[0.2em]">DPPI OFFICIAL</span>
+
+                                {/* 2. BAGIAN KANAN (LOGO & TOMBOL) */}
+                                <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
+                                    <div className="flex flex-col items-center mr-0.5 sm:mr-2 border-l border-white/10 pl-1.5 sm:pl-4">
+                                            <img src={logoUrl} alt="Logo" className="h-6 w-6 sm:h-12 sm:w-12 object-contain logo-hologram" />
+                                            <span className="text-[4px] sm:text-[7px] text-orange-400/60 font-black uppercase mt-0.5 sm:mt-1 tracking-widest sm:tracking-[0.2em] whitespace-nowrap">DPPI OFFICIAL</span>
                                     </div>
-                                    <button onClick={syncData} className="w-9 h-9 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-orange-500/10 text-orange-400 border border-orange-500/20 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all shadow-lg active:scale-90"><i className={`fas fa-sync text-xs md:text-base ${isHistoryLoading ? 'animate-spin' : ''}`}></i></button>
-                                    <button onClick={() => setView('login')} className="w-9 h-9 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-lg active:scale-90"><i className="fas fa-power-off text-xs md:text-base"></i></button>
+                                    <button onClick={syncData} className="w-7 h-7 sm:w-12 sm:h-12 rounded-lg sm:rounded-2xl bg-orange-500/10 text-orange-400 border border-orange-500/20 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all shadow-lg active:scale-90">
+                                        <i className={`fas fa-sync text-[10px] sm:text-base ${isHistoryLoading ? 'animate-spin' : ''}`}></i>
+                                    </button>
+                                    <button onClick={() => setView('login')} className="w-7 h-7 sm:w-12 sm:h-12 rounded-lg sm:rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-lg active:scale-90">
+                                        <i className="fas fa-power-off text-[10px] sm:text-base"></i>
+                                    </button>
                                 </div>
+
                             </div>
 
                             {/* --- DASHBOARD TABS (Tweak for small screens) --- */}
