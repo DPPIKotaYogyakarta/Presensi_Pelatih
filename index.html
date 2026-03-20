@@ -1642,11 +1642,11 @@
                 );
             };
 
+            // CLEAN SINGLE RETURN BLOCK:
             return (
                 <div className="min-h-screen flex flex-col justify-center items-center p-4 relative z-10">
                     {isLoading && <LoadingScreen />}
 
-                    {/* --- BIOMETRIC SCANNER OVERLAY --- */}
                     {isBiometricActive && (
                         <div className="biometric-scanner-overlay animate-in">
                             <div className="flex flex-col items-center">
@@ -1678,12 +1678,10 @@
                     {view === 'login' && (
                         <div className="w-full max-w-[360px] bg-[#121A2F] p-8 md:p-10 rounded-[24px] border border-white/5 relative shadow-[0_15px_50px_-12px_rgba(0,0,0,0.8)] z-20 animate-in text-center">
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4/5 h-[2px] bg-gradient-to-r from-transparent via-orange-500 to-transparent shadow-[0_0_20px_rgba(243,156,18,0.8)]"></div>
-                            
                             <div className="relative w-20 h-20 mx-auto mb-6 flex items-center justify-center">
                                 <div className="absolute inset-0 bg-blue-500/40 rounded-full blur-xl"></div>
                                 <img src={logoUrl} alt="Logo" className="w-14 h-14 md:w-16 md:h-16 object-contain relative z-10 drop-shadow-lg" />
                             </div>
-
                             <div className="text-center mb-8">
                                 <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-1">
                                     <span className="text-orange-500">PRESENSI</span> <span className="text-white">PEGAWAI</span>
@@ -1692,7 +1690,6 @@
                                     DPPI OFFICIAL
                                 </p>
                             </div>
-
                             <form onSubmit={handleLogin} className="space-y-4">
                                 <div className="relative">
                                     <i className="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
@@ -1730,7 +1727,6 @@
                                     </button>
                                 </div>
                             </form>
-                            
                             {biometricEnabled && (
                                 <div className="mt-6 pt-6 border-t border-white/10 animate-in">
                                     <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-4">Atau Masuk Dengan</p>
@@ -1746,7 +1742,6 @@
                                     </div>
                                 </div>
                             )}
-
                             <p className="mt-6 text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">Belum punya akses? <button type="button" onClick={() => setView('register')} className="text-orange-500 underline hover:text-orange-400 transition-colors">Daftar Sekarang</button></p>
                         </div>
                     )}
@@ -1792,7 +1787,6 @@
                         </div>
                     )}
 
-                    {/* --- HALAMAN ATTENDANCE (PRESENSI) YANG SEBELUMNYA HILANG --- */}
                     {view === 'attendance' && (
                         <div className="w-full max-w-md animate-in flex flex-col gap-6 pb-20">
                             <div className="flex justify-between items-center px-4">
@@ -1802,7 +1796,6 @@
                                 <div className="text-center">
                                     <h3 className="text-white font-black uppercase text-xs tracking-widest">Sistem Presensi</h3>
                                     <p className="text-[10px] text-orange-gradient font-black uppercase tracking-[0.2em]">{selectedDuration} • {presenceType}</p>
-                                    {/* INDIKATOR STATUS UNLOCK */}
                                     <div className={`mt-1 text-[8px] font-mono px-2 py-0.5 rounded border inline-block ${currentUser?.bypassGeo ? 'bg-emerald-900/50 border-emerald-500 text-emerald-400' : 'bg-rose-900/50 border-rose-500 text-rose-400'}`}>
                                         STATUS GEMBOK: {currentUser?.bypassGeo ? "TERBUKA (UNLOCK)" : "TERTUTUP (LOCK)"}
                                     </div>
@@ -1813,10 +1806,8 @@
                             <div className="os-window p-6 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden">
                                 <div className="absolute top-0 right-0 p-24 bg-orange-500/5 blur-[60px] rounded-full pointer-events-none"></div>
                                 
-                                {/* Bagian Kamera */}
                                 <div className="video-container mb-6 shadow-2xl bg-black flex items-center justify-center relative overflow-hidden rounded-2xl border border-white/10 ring-1 ring-white/10">
                                     
-                                    {/* OVERLAY LOADING SAAT MEMINTA IZIN KAMERA */}
                                     {isRequestingCamera && (
                                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 z-20 animate-in">
                                             <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -1835,7 +1826,6 @@
                                             <p className="text-[10px] text-white font-black mb-1 uppercase tracking-widest">AKSES LIVE KAMERA GAGAL</p>
                                             <p className="text-[8px] text-rose-300 mb-5 px-2 leading-relaxed">{cameraErrorMsg}</p>
                                             
-                                            {/* Tombol Utama: Paksa Coba Lagi Live Camera */}
                                             <button onClick={startCamera} className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-transform mb-3 w-full max-w-[220px]">
                                                 <i className="fas fa-sync-alt mr-2"></i> IZINKAN & COBA LAGI
                                             </button>
@@ -1846,7 +1836,6 @@
                                                 <div className="h-px bg-white flex-1"></div>
                                             </div>
 
-                                            {/* Tombol Alternatif Terakhir: Kamera Bawaan HP */}
                                             <label className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-5 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest cursor-pointer shadow-lg active:scale-95 transition-transform w-full max-w-[220px] text-center block">
                                                 <i className="fas fa-camera mr-2"></i> BUKA KAMERA BAWAAN
                                                 <input type="file" accept="image/*" capture="user" className="hidden" onChange={handleNativeCamera} />
@@ -1854,7 +1843,6 @@
                                         </div>
                                     )}
 
-                                    {/* OVERLAYS UI (HUD) - ONLY SHOW IF NOT FAILED AND NOT FALLBACK */}
                                     {(!cameraFailed || fallbackImage) && (
                                         <>
                                             <div className="absolute inset-0 border-[4px] border-white/10 rounded-[1.3rem] pointer-events-none z-20"></div>
@@ -1901,7 +1889,6 @@
                                     )}
                                 </div>
 
-                                {/* Bagian Peta GPS */}
                                 {presenceType !== 'Izin' && (
                                     <div className="mb-6 animate-in">
                                         <div className="flex justify-between items-center mb-2">
@@ -1921,7 +1908,6 @@
                                     </div>
                                 )}
 
-                                {/* Input Keterangan / Alasan */}
                                 {(presenceType === 'Izin' || selectedDuration === 'Khusus' || selectedDuration === 'Ekstra') && (
                                     <div className="mb-6">
                                         <label className="text-[10px] font-black uppercase tracking-widest ml-2 flex items-center gap-2 mb-2">
@@ -1939,7 +1925,6 @@
                                     </div>
                                 )}
 
-                                {/* Peringatan GPS */}
                                 {isOutOfRange && presenceType !== 'Izin' && (
                                     <div className="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl mb-6 text-center animate-pulse">
                                         <p className="text-[9px] text-amber-400 font-bold uppercase tracking-widest"><i className="fas fa-exclamation-triangle mr-1"></i> Di Luar Radius Kantor (&gt;500m)</p>
@@ -1951,26 +1936,33 @@
                                     </div>
                                 )}
 
-                                {/* Tombol Submit */}
+                                {(distanceToTarget > 0.5 && currentUser?.bypassGeo && presenceType !== 'Izin') && (
+                                    <div className="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl mb-6 flex items-center gap-3 animate-in">
+                                        <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0"><i className="fas fa-unlock"></i></div>
+                                        <p className="text-[9px] text-emerald-200 font-bold leading-snug">
+                                            INFO: Anda berada di luar radius, namun <span className="text-white">Admin telah membuka gembok akses</span> untuk Anda.
+                                        </p>
+                                    </div>
+                                )}
+
                                 <button
                                     onClick={doAbsen}
                                     disabled={isLoading || (presenceType !== 'Izin' && isLocationMissing)}
                                     className={`w-full py-5 rounded-2xl text-xs font-black uppercase tracking-[0.3em] transition-all shadow-2xl flex items-center justify-center gap-3 ${
-                                        isLoading || (presenceType !== 'Izin' && isLocationMissing) ? 'btn-disabled opacity-50 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/20 active:scale-95'
+                                        isLoading || (presenceType !== 'Izin' && isLocationMissing) ? 'btn-disabled opacity-50 cursor-not-allowed' : 'btn-orange hover:scale-[1.02]'
                                     }`}
                                 >
                                     {isLoading ? (
                                         <div className="loader"></div>
                                     ) : (presenceType !== 'Izin' && isLocationMissing) ? (
-                                        <><i className="fas fa-location-crosshairs animate-spin text-orange-400 text-lg"></i> MENCARI LOKASI...</>
+                                        <><i className="fas fa-location-crosshairs animate-spin text-white text-lg"></i> MENCARI LOKASI...</>
                                     ) : (
-                                        <><i className={`fas fa-${isOutOfRange ? 'times-circle' : 'fingerprint'} text-lg`}></i> {isOutOfRange ? 'OUT OF RADIUS' : 'SUBMIT PRESENSI'}</>
+                                        <><i className={`fas fa-${isOutOfRange && !currentUser?.bypassGeo ? 'times-circle' : 'fingerprint'} text-lg`}></i> {isOutOfRange && !currentUser?.bypassGeo ? 'OUT OF RADIUS' : 'SUBMIT PRESENSI'}</>
                                     )}
                                 </button>
                             </div>
                         </div>
                     )}
-                    {/* --- BATAS HALAMAN ATTENDANCE --- */}
 
                     {view === 'dashboard' && currentUser && (
                         <div className="w-full max-w-6xl animate-in flex flex-col gap-6 h-full pb-10">
