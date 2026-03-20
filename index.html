@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Penyesuaian viewport cover untuk notch / safe area modern iPhones -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <title>Sistem Presensi DPPI</title>
     <meta name="description" content="Aplikasi Presensi DPPI Official">
@@ -18,7 +19,7 @@
     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/a/a0/Logo_dppi_512.png">
     <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/a/a0/Logo_dppi_512.png">
     
-    <!-- ANTI INSPECT & DEVTOOLS BLOCKER (KEAMANAN) -->
+    <!-- ANTI INSPECT & DEVTOOLS BLOCKER -->
     <script>
         document.addEventListener("contextmenu", e => e.preventDefault());
         document.onkeydown = function(e) {
@@ -92,6 +93,11 @@
             color: #f8fafc;
             margin: 0;
             overscroll-behavior-y: none;
+            /* Safe area padding untuk iPhone X ke atas */
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
 
         .os-window {
@@ -521,15 +527,15 @@
 
             // Loading Screen Component
             const LoadingScreen = () => (
-                <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/80 backdrop-blur-md transition-all">
+                <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/80 backdrop-blur-md transition-all px-4">
                       <div className="relative mb-6">
                         <div className="w-20 h-20 border-4 border-white/5 border-t-orange-500 rounded-full animate-spin"></div>
                         <div className="absolute inset-0 flex items-center justify-center">
-                             <img src={logoUrl} className="w-8 opacity-80 animate-pulse" />
+                             <img src={logoUrl} className="w-8 h-8 object-contain opacity-80 animate-pulse" />
                         </div>
                       </div>
-                      <h2 className="text-white font-black text-xl uppercase tracking-[0.2em] animate-pulse">Memproses Data</h2>
-                      <p className="text-orange-400 text-xs mt-2 font-mono">Mohon Tunggu Sebentar...</p>
+                      <h2 className="text-white font-black text-lg md:text-xl uppercase tracking-[0.2em] animate-pulse text-center">Memproses Data</h2>
+                      <p className="text-orange-400 text-[10px] md:text-xs mt-2 font-mono text-center">Mohon Tunggu Sebentar...</p>
                 </div>
             );
 
@@ -993,7 +999,6 @@
 
             useEffect(() => { if (currentUser) syncData(); }, [currentUser]);
             
-            // --- EFEK CAMERA SAAT MASUK KE ATTENDANCE VIEW ---
             useEffect(() => {
                 if (view === 'attendance') startCamera(); else stopCamera();
                 return () => stopCamera();
@@ -1082,7 +1087,6 @@
                 } else { setTodayStatus('none'); }
             }, [presences]);
 
-            // --- EFEK GPS MAP ---
             useEffect(() => {
                 let watchId = null;
                 if (view === 'attendance' && presenceType !== 'Izin') {
@@ -1523,11 +1527,11 @@
                 if (status === 'completed') {
                     return (
                           <div className="text-center animate-in">
-                            <div className="w-24 h-24 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-6 text-4xl shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+                            <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-4 sm:mb-6 text-3xl sm:text-4xl shadow-[0_0_30px_rgba(16,185,129,0.3)]">
                                 <i className="fas fa-check-double"></i>
                             </div>
-                            <h3 className="text-white font-black text-xl mb-2 uppercase tracking-[0.2em]">Selesai</h3>
-                            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-10">Anda sudah menyelesaikan presensi {keyword} hari ini.</p>
+                            <h3 className="text-white font-black text-lg sm:text-xl mb-1 sm:mb-2 uppercase tracking-[0.2em]">Selesai</h3>
+                            <p className="text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-6 sm:mb-10">Anda sudah menyelesaikan presensi {keyword} hari ini.</p>
                             <button onClick={() => setSelectionStage('type')} className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-widest">Kembali</button>
                         </div>
                     );
@@ -1536,14 +1540,14 @@
                 if (status === 'hadir') {
                     return (
                         <div className="animate-in relative z-10 text-center">
-                            <button onClick={() => setSelectionStage('type')} className="text-[10px] text-slate-500 mb-8 font-black uppercase tracking-widest flex items-center justify-center gap-2 mx-auto hover:text-white transition-colors"><i className="fas fa-arrow-left"></i> KEMBALI</button>
-                            <h3 className="text-white font-black text-2xl mb-2 uppercase tracking-[0.2em]">{keyword}</h3>
+                            <button onClick={() => setSelectionStage('type')} className="text-[10px] text-slate-500 mb-6 sm:mb-8 font-black uppercase tracking-widest flex items-center justify-center gap-2 mx-auto hover:text-white transition-colors"><i className="fas fa-arrow-left"></i> KEMBALI</button>
+                            <h3 className="text-white font-black text-xl sm:text-2xl mb-1 sm:mb-2 uppercase tracking-[0.2em]">{keyword}</h3>
                             {selectedShift && <p className="text-orange-400 text-[10px] font-black uppercase tracking-widest mb-1">{selectedShift}</p>}
-                            <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-10">Status: Sedang Bertugas</p>
+                            <p className="text-emerald-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-6 sm:mb-10">Status: Sedang Bertugas</p>
                             
-                            <button onClick={() => { setPresenceType('Pulang'); setView('attendance'); }} className="selection-card p-10 rounded-3xl bg-rose-900/10 flex flex-col items-center gap-5 group border border-rose-500/20 active:scale-95 shadow-xl max-w-xs mx-auto w-full hover:bg-rose-900/20">
-                                <div className="w-20 h-20 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400 text-4xl group-hover:bg-rose-500 group-hover:text-white transition-all"><i className="fas fa-sign-out-alt"></i></div>
-                                <span className="font-black text-sm text-rose-100 uppercase tracking-widest">PULANG</span>
+                            <button onClick={() => { setPresenceType('Pulang'); setView('attendance'); }} className="selection-card p-6 sm:p-10 rounded-3xl bg-rose-900/10 flex flex-col items-center gap-3 sm:gap-5 group border border-rose-500/20 active:scale-95 shadow-xl max-w-[240px] sm:max-w-xs mx-auto w-full hover:bg-rose-900/20">
+                                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400 text-3xl sm:text-4xl group-hover:bg-rose-500 group-hover:text-white transition-all"><i className="fas fa-sign-out-alt"></i></div>
+                                <span className="font-black text-xs sm:text-sm text-rose-100 uppercase tracking-widest">PULANG</span>
                             </button>
                         </div>
                     );
@@ -1551,14 +1555,14 @@
 
                 return (
                     <div className="animate-in relative z-10 text-center">
-                        <button onClick={() => setSelectionStage('type')} className="text-[10px] text-slate-500 mb-8 font-black uppercase tracking-widest flex items-center justify-center gap-2 mx-auto hover:text-white transition-colors"><i className="fas fa-arrow-left"></i> KEMBALI</button>
-                        <h3 className="text-white font-black text-2xl mb-2 uppercase tracking-[0.2em]">{keyword}</h3>
-                        {selectedShift && <div className="bg-orange-500/10 border border-orange-500/20 inline-block px-3 py-1 rounded-lg mb-8"><p className="text-orange-400 text-[10px] font-black uppercase tracking-widest">{selectedShift}</p></div>}
+                        <button onClick={() => setSelectionStage('type')} className="text-[10px] text-slate-500 mb-6 sm:mb-8 font-black uppercase tracking-widest flex items-center justify-center gap-2 mx-auto hover:text-white transition-colors"><i className="fas fa-arrow-left"></i> KEMBALI</button>
+                        <h3 className="text-white font-black text-xl sm:text-2xl mb-2 uppercase tracking-[0.2em]">{keyword}</h3>
+                        {selectedShift && <div className="bg-orange-500/10 border border-orange-500/20 inline-block px-3 py-1 rounded-lg mb-6 sm:mb-8"><p className="text-orange-400 text-[10px] font-black uppercase tracking-widest">{selectedShift}</p></div>}
                         
-                        <div className={`grid grid-cols-1 gap-8 max-w-xs mx-auto ${!selectedShift ? 'mt-8' : ''}`}>
-                            <button onClick={() => { setPresenceType('Hadir'); setView('attendance'); }} className="selection-card p-10 rounded-3xl bg-emerald-900/10 flex flex-col items-center gap-5 group border border-emerald-500/20 active:scale-95 shadow-xl hover:bg-emerald-900/20">
-                                <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-4xl group-hover:bg-emerald-500 group-hover:text-white transition-all"><i className="fas fa-sign-in-alt"></i></div>
-                                <span className="font-black text-sm text-emerald-100 uppercase tracking-widest">DATANG</span>
+                        <div className={`grid grid-cols-1 gap-8 max-w-[240px] sm:max-w-xs mx-auto ${!selectedShift ? 'mt-6 sm:mt-8' : ''}`}>
+                            <button onClick={() => { setPresenceType('Hadir'); setView('attendance'); }} className="selection-card p-6 sm:p-10 rounded-3xl bg-emerald-900/10 flex flex-col items-center gap-3 sm:gap-5 group border border-emerald-500/20 active:scale-95 shadow-xl hover:bg-emerald-900/20">
+                                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-3xl sm:text-4xl group-hover:bg-emerald-500 group-hover:text-white transition-all"><i className="fas fa-sign-in-alt"></i></div>
+                                <span className="font-black text-xs sm:text-sm text-emerald-100 uppercase tracking-widest">DATANG</span>
                             </button>
                         </div>
                     </div>
@@ -1568,7 +1572,7 @@
             const renderPresenceButtons = () => {
                 if (selectionStage === 'action') {
                     return (
-                        <div className="os-window p-8 rounded-[2rem] min-h-[400px] flex flex-col justify-center text-center relative border border-white/5">
+                        <div className="os-window p-6 sm:p-8 rounded-[2rem] min-h-[400px] flex flex-col justify-center text-center relative border border-white/5">
                             {renderActionButtons()}
                         </div>
                     );
@@ -1576,16 +1580,16 @@
 
                 if (todayStatus === 'completed') {
                     return (
-                          <div className="os-window p-8 rounded-[2rem] min-h-[400px] flex flex-col justify-center text-center relative border border-white/5 animate-in">
-                            <div className="w-24 h-24 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-6 text-4xl shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+                          <div className="os-window p-6 sm:p-8 rounded-[2rem] min-h-[400px] flex flex-col justify-center text-center relative border border-white/5 animate-in">
+                            <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-4 sm:mb-6 text-3xl sm:text-4xl shadow-[0_0_30px_rgba(16,185,129,0.3)]">
                                 <i className="fas fa-check-double"></i>
                             </div>
-                            <h3 className="text-white font-black text-xl mb-2 uppercase tracking-[0.2em]">Presensi Selesai</h3>
-                            <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-10">Anda sudah menyelesaikan presensi {selectedDuration || 'hari ini'}.</p>
+                            <h3 className="text-white font-black text-lg sm:text-xl mb-1 sm:mb-2 uppercase tracking-[0.2em]">Presensi Selesai</h3>
+                            <p className="text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-6 sm:mb-10">Anda sudah menyelesaikan presensi {selectedDuration || 'hari ini'}.</p>
                             
-                            <button onClick={() => handleDurationSelect('Ekstra')} className="selection-card p-4 rounded-2xl bg-orange-900/10 flex items-center justify-center gap-3 border border-orange-500/20 hover:bg-orange-600/10 transition-all shadow-xl max-w-xs mx-auto w-full group">
-                                <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400 group-hover:text-white group-hover:bg-orange-500 transition-all"><i className="fas fa-plus"></i></div>
-                                <span className="font-black text-[10px] text-orange-100 uppercase tracking-widest">Tambah Tugas (Ekstra)</span>
+                            <button onClick={() => handleDurationSelect('Ekstra')} className="selection-card p-3 sm:p-4 rounded-2xl bg-orange-900/10 flex items-center justify-center gap-2 sm:gap-3 border border-orange-500/20 hover:bg-orange-600/10 transition-all shadow-xl max-w-xs mx-auto w-full group">
+                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400 group-hover:text-white group-hover:bg-orange-500 transition-all"><i className="fas fa-plus"></i></div>
+                                <span className="font-black text-[9px] sm:text-[10px] text-orange-100 uppercase tracking-widest">Tambah Tugas (Ekstra)</span>
                             </button>
                         </div>
                     );
@@ -1593,48 +1597,48 @@
                 
                 if (todayStatus === 'hadir') {
                       return (
-                        <div className="os-window p-8 rounded-[2rem] min-h-[400px] flex flex-col justify-center text-center relative border border-white/5 animate-in">
-                            <h3 className="text-white font-black text-xl mb-1 uppercase tracking-[0.3em]">Status: <span className="text-emerald-400">Telah Datang</span></h3>
-                            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-10 italic opacity-80">Selesaikan presensi kepulangan Anda</p>
-                             <button onClick={() => { setPresenceType('Pulang'); setView('attendance'); }} className="selection-card p-10 rounded-3xl bg-rose-900/10 flex flex-col items-center gap-5 group border border-rose-500/20 active:scale-95 shadow-xl max-w-xs mx-auto w-full">
-                                <div className="w-20 h-20 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400 text-4xl group-hover:bg-rose-500 group-hover:text-white transition-all"><i className="fas fa-sign-out-alt"></i></div>
-                                <span className="font-black text-sm text-rose-100 uppercase tracking-widest">ABSEN PULANG</span>
+                        <div className="os-window p-6 sm:p-8 rounded-[2rem] min-h-[400px] flex flex-col justify-center text-center relative border border-white/5 animate-in">
+                            <h3 className="text-white font-black text-lg sm:text-xl mb-1 uppercase tracking-[0.2em] sm:tracking-[0.3em]">Status: <span className="text-emerald-400">Telah Datang</span></h3>
+                            <p className="text-slate-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] mb-6 sm:mb-10 italic opacity-80">Selesaikan presensi kepulangan Anda</p>
+                             <button onClick={() => { setPresenceType('Pulang'); setView('attendance'); }} className="selection-card p-6 sm:p-10 rounded-3xl bg-rose-900/10 flex flex-col items-center gap-3 sm:gap-5 group border border-rose-500/20 active:scale-95 shadow-xl max-w-[240px] sm:max-w-xs mx-auto w-full">
+                                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-400 text-3xl sm:text-4xl group-hover:bg-rose-500 group-hover:text-white transition-all"><i className="fas fa-sign-out-alt"></i></div>
+                                <span className="font-black text-xs sm:text-sm text-rose-100 uppercase tracking-widest">ABSEN PULANG</span>
                             </button>
                             
-                             <button onClick={() => handleDurationSelect('Ekstra')} className="mt-6 selection-card p-4 rounded-2xl bg-orange-900/10 flex items-center justify-center gap-3 border border-orange-500/20 hover:bg-orange-600/10 transition-all shadow-xl max-w-xs mx-auto w-full group">
-                                <div className="w-8 h-8 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400 group-hover:text-white group-hover:bg-orange-500 transition-all"><i className="fas fa-plus text-xs"></i></div>
-                                <span className="font-black text-[9px] text-orange-100 uppercase tracking-widest">Tugas Tambahan</span>
+                             <button onClick={() => handleDurationSelect('Ekstra')} className="mt-4 sm:mt-6 selection-card p-3 sm:p-4 rounded-2xl bg-orange-900/10 flex items-center justify-center gap-2 sm:gap-3 border border-orange-500/20 hover:bg-orange-600/10 transition-all shadow-xl max-w-[240px] sm:max-w-xs mx-auto w-full group">
+                                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400 group-hover:text-white group-hover:bg-orange-500 transition-all"><i className="fas fa-plus text-[10px] sm:text-xs"></i></div>
+                                <span className="font-black text-[8px] sm:text-[9px] text-orange-100 uppercase tracking-widest">Tugas Tambahan</span>
                             </button>
                         </div>
                     );
                 }
                 return (
-                    <div className="os-window p-8 rounded-[2rem] min-h-[400px] flex flex-col justify-center text-center relative border border-white/5">
+                    <div className="os-window p-6 sm:p-8 rounded-[2rem] min-h-[400px] flex flex-col justify-center text-center relative border border-white/5">
                         {renderShiftModal()}
                         <div className="animate-in relative z-10">
-                            <h3 className="text-white font-black text-xl mb-1 uppercase tracking-[0.3em]">Selamat Datang</h3>
-                            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-10 italic opacity-80">Silahkan pilih kategori presensi kerja</p>
-                            <div className="grid grid-cols-2 gap-4 max-w-2xl mx-auto">
-                                <button onClick={() => handleDurationSelect('Full Time')} className="selection-card p-6 rounded-3xl bg-blue-900/10 flex flex-col items-center gap-3 border border-blue-500/10 hover:bg-blue-600/10 transition-all shadow-xl">
-                                    <div className="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center text-blue-400"><i className="fas fa-sun text-2xl"></i></div>
-                                    <span className="font-black text-[10px] text-blue-100 uppercase tracking-widest">FULL DAY</span>
+                            <h3 className="text-white font-black text-lg sm:text-xl mb-1 uppercase tracking-[0.2em] sm:tracking-[0.3em]">Selamat Datang</h3>
+                            <p className="text-slate-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] mb-6 sm:mb-10 italic opacity-80">Silahkan pilih kategori presensi kerja</p>
+                            <div className="grid grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto px-2 sm:px-0">
+                                <button onClick={() => handleDurationSelect('Full Time')} className="selection-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-blue-900/10 flex flex-col items-center gap-2 sm:gap-3 border border-blue-500/10 hover:bg-blue-600/10 transition-all shadow-xl">
+                                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-blue-500/20 flex items-center justify-center text-blue-400"><i className="fas fa-sun text-lg sm:text-2xl"></i></div>
+                                    <span className="font-black text-[9px] sm:text-[10px] text-blue-100 uppercase tracking-widest">FULL DAY</span>
                                 </button>
-                                <button onClick={() => handleDurationSelect('Setengah Hari')} className="selection-card p-6 rounded-3xl bg-amber-900/10 flex flex-col items-center gap-3 border border-amber-500/10 hover:bg-amber-600/10 transition-all shadow-xl">
-                                    <div className="w-14 h-14 rounded-2xl bg-amber-500/20 flex items-center justify-center text-amber-400"><i className="fas fa-cloud-sun text-2xl"></i></div>
-                                    <span className="font-black text-[10px] text-amber-100 uppercase tracking-widest">HALF DAY</span>
+                                <button onClick={() => handleDurationSelect('Setengah Hari')} className="selection-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-amber-900/10 flex flex-col items-center gap-2 sm:gap-3 border border-amber-500/10 hover:bg-amber-600/10 transition-all shadow-xl">
+                                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-amber-500/20 flex items-center justify-center text-amber-400"><i className="fas fa-cloud-sun text-lg sm:text-2xl"></i></div>
+                                    <span className="font-black text-[9px] sm:text-[10px] text-amber-100 uppercase tracking-widest">HALF DAY</span>
                                 </button>
-                                <button onClick={() => { setSelectedDuration('Izin'); setPresenceType('Izin'); setView('attendance'); }} className="selection-card p-6 rounded-3xl bg-purple-900/10 flex flex-col items-center gap-3 border border-purple-500/10 hover:bg-purple-600/10 transition-all shadow-xl">
-                                    <div className="w-14 h-14 rounded-2xl bg-purple-500/20 flex items-center justify-center text-purple-400"><i className="fas fa-notes-medical text-2xl"></i></div>
-                                    <span className="font-black text-[10px] text-purple-100 uppercase tracking-widest">IZIN</span>
+                                <button onClick={() => { setSelectedDuration('Izin'); setPresenceType('Izin'); setView('attendance'); }} className="selection-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-purple-900/10 flex flex-col items-center gap-2 sm:gap-3 border border-purple-500/10 hover:bg-purple-600/10 transition-all shadow-xl">
+                                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-purple-500/20 flex items-center justify-center text-purple-400"><i className="fas fa-notes-medical text-lg sm:text-2xl"></i></div>
+                                    <span className="font-black text-[9px] sm:text-[10px] text-purple-100 uppercase tracking-widest">IZIN</span>
                                 </button>
-                                <button onClick={() => handleDurationSelect('Khusus')} className="selection-card p-6 rounded-3xl bg-cyan-900/10 flex flex-col items-center gap-3 border border-cyan-500/10 hover:bg-cyan-600/10 transition-all shadow-xl">
-                                    <div className="w-14 h-14 rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-400"><i className="fas fa-star text-2xl"></i></div>
-                                    <span className="font-black text-[10px] text-cyan-100 uppercase tracking-widest">KHUSUS</span>
+                                <button onClick={() => handleDurationSelect('Khusus')} className="selection-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-cyan-900/10 flex flex-col items-center gap-2 sm:gap-3 border border-cyan-500/10 hover:bg-cyan-600/10 transition-all shadow-xl">
+                                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-cyan-500/20 flex items-center justify-center text-cyan-400"><i className="fas fa-star text-lg sm:text-2xl"></i></div>
+                                    <span className="font-black text-[9px] sm:text-[10px] text-cyan-100 uppercase tracking-widest">KHUSUS</span>
                                 </button>
                                 
-                                <button onClick={() => handleDurationSelect('Ekstra')} className="selection-card p-6 rounded-3xl bg-orange-900/10 flex flex-col items-center gap-3 border border-orange-500/10 hover:bg-orange-600/10 transition-all shadow-xl col-span-2">
-                                    <div className="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center text-orange-400"><i className="fas fa-briefcase text-2xl"></i></div>
-                                    <span className="font-black text-[10px] text-orange-100 uppercase tracking-widest">TUGAS TAMBAHAN (EKSTRA)</span>
+                                <button onClick={() => handleDurationSelect('Ekstra')} className="selection-card p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-orange-900/10 flex flex-col items-center gap-2 sm:gap-3 border border-orange-500/10 hover:bg-orange-600/10 transition-all shadow-xl col-span-2">
+                                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-orange-500/20 flex items-center justify-center text-orange-400"><i className="fas fa-briefcase text-lg sm:text-2xl"></i></div>
+                                    <span className="font-black text-[9px] sm:text-[10px] text-orange-100 uppercase tracking-widest">TUGAS TAMBAHAN (EKSTRA)</span>
                                 </button>
                             </div>
                         </div>
@@ -1644,7 +1648,7 @@
 
             // CLEAN SINGLE RETURN BLOCK:
             return (
-                <div className="min-h-screen flex flex-col justify-center items-center p-4 relative z-10">
+                <div className="min-h-screen flex flex-col justify-center items-center p-3 sm:p-4 relative z-10 w-full overflow-x-hidden">
                     {isLoading && <LoadingScreen />}
 
                     {isBiometricActive && (
@@ -1665,10 +1669,10 @@
                                         </div>
                                     )}
                                 </div>
-                                <h3 className="text-white font-black text-xl uppercase tracking-[0.2em] mb-2 animate-pulse">
+                                <h3 className="text-white font-black text-xl uppercase tracking-[0.2em] mb-2 animate-pulse text-center">
                                     {biometricType === 'face' ? 'Memindai Wajah' : 'Memindai Sidik Jari'}
                                 </h3>
-                                <p className="text-orange-400 text-[10px] font-bold uppercase tracking-[0.4em] opacity-80">
+                                <p className="text-orange-400 text-[10px] font-bold uppercase tracking-[0.4em] opacity-80 text-center">
                                     Verifikasi Identitas...
                                 </p>
                             </div>
@@ -1676,17 +1680,17 @@
                     )}
 
                     {view === 'login' && (
-                        <div className="w-full max-w-[360px] bg-[#121A2F] p-8 md:p-10 rounded-[24px] border border-white/5 relative shadow-[0_15px_50px_-12px_rgba(0,0,0,0.8)] z-20 animate-in text-center">
+                        <div className="w-full max-w-[360px] bg-[#121A2F] p-6 sm:p-8 md:p-10 rounded-[24px] border border-white/5 relative shadow-[0_15px_50px_-12px_rgba(0,0,0,0.8)] z-20 animate-in text-center mx-auto">
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4/5 h-[2px] bg-gradient-to-r from-transparent via-orange-500 to-transparent shadow-[0_0_20px_rgba(243,156,18,0.8)]"></div>
-                            <div className="relative w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+                            <div className="relative w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 flex items-center justify-center">
                                 <div className="absolute inset-0 bg-blue-500/40 rounded-full blur-xl"></div>
-                                <img src={logoUrl} alt="Logo" className="w-14 h-14 md:w-16 md:h-16 object-contain relative z-10 drop-shadow-lg" />
+                                <img src={logoUrl} alt="Logo" className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 object-contain relative z-10 drop-shadow-lg" />
                             </div>
                             <div className="text-center mb-8">
-                                <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-1">
+                                <h2 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight mb-1">
                                     <span className="text-orange-500">PRESENSI</span> <span className="text-white">PEGAWAI</span>
                                 </h2>
-                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.25em]">
+                                <p className="text-[8px] sm:text-[9px] text-slate-400 font-bold uppercase tracking-[0.25em]">
                                     DPPI OFFICIAL
                                 </p>
                             </div>
@@ -1729,90 +1733,91 @@
                             </form>
                             {biometricEnabled && (
                                 <div className="mt-6 pt-6 border-t border-white/10 animate-in">
-                                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-4">Atau Masuk Dengan</p>
+                                    <p className="text-[8px] sm:text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-4">Atau Masuk Dengan</p>
                                     <div className="grid grid-cols-2 gap-3">
                                         <button type="button" onClick={() => { setBiometricType('face'); handleBiometricLogin(); }} className="p-3 rounded-xl bg-[#080C17] border border-white/5 hover:border-orange-500/50 transition-all flex flex-col items-center gap-2 group shadow-inner">
                                             <i className="fas fa-expand text-xl text-slate-400 group-hover:text-orange-500 transition-colors"></i>
-                                            <span className="text-[8px] font-black text-slate-300 uppercase tracking-wider">Face ID</span>
+                                            <span className="text-[7px] sm:text-[8px] font-black text-slate-300 uppercase tracking-wider">Face ID</span>
                                         </button>
                                         <button type="button" onClick={() => { setBiometricType('finger'); handleBiometricLogin(); }} className="p-3 rounded-xl bg-[#080C17] border border-white/5 hover:border-orange-500/50 transition-all flex flex-col items-center gap-2 group shadow-inner">
                                             <i className="fas fa-fingerprint text-xl text-slate-400 group-hover:text-orange-500 transition-colors"></i>
-                                            <span className="text-[8px] font-black text-slate-300 uppercase tracking-wider">Sidik Jari</span>
+                                            <span className="text-[7px] sm:text-[8px] font-black text-slate-300 uppercase tracking-wider">Sidik Jari</span>
                                         </button>
                                     </div>
                                 </div>
                             )}
-                            <p className="mt-6 text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">Belum punya akses? <button type="button" onClick={() => setView('register')} className="text-orange-500 underline hover:text-orange-400 transition-colors">Daftar Sekarang</button></p>
+                            <p className="mt-6 text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">Belum punya akses? <button type="button" onClick={() => setView('register')} className="text-orange-500 underline hover:text-orange-400 transition-colors">Daftar Sekarang</button></p>
                         </div>
                     )}
 
                     {view === 'register' && (
-                        <div className="os-window p-8 rounded-[2.5rem] w-full max-w-lg animate-in border border-white/10 shadow-2xl">
-                            <h2 className="text-2xl font-black mb-6 text-center text-white uppercase tracking-tight"><span className="text-blue-400">Registrasi</span> Pegawai</h2>
-                            <form onSubmit={handleRegister} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="md:col-span-2 flex flex-col items-center gap-2 mb-4">
-                                    <div className="w-24 h-24 rounded-full border-2 border-dashed border-blue-500/50 flex items-center justify-center overflow-hidden bg-black/40 relative cursor-pointer group shadow-inner">
-                                            {regForm.profilePic ? <img src={regForm.profilePic} className="w-full h-full object-cover" /> : <i className="fas fa-camera text-blue-500/30 text-2xl group-hover:scale-110 transition-transform"></i>}
+                        <div className="os-window p-5 sm:p-8 rounded-[24px] sm:rounded-[2.5rem] w-full max-w-lg animate-in border border-white/10 shadow-2xl">
+                            <h2 className="text-xl sm:text-2xl font-black mb-6 text-center text-white uppercase tracking-tight"><span className="text-blue-400">Registrasi</span> Pegawai</h2>
+                            <form onSubmit={handleRegister} className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                                <div className="md:col-span-2 flex flex-col items-center gap-2 mb-2 sm:mb-4">
+                                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-dashed border-blue-500/50 flex items-center justify-center overflow-hidden bg-black/40 relative cursor-pointer group shadow-inner">
+                                            {regForm.profilePic ? <img src={regForm.profilePic} className="w-full h-full object-cover" /> : <i className="fas fa-camera text-blue-500/30 text-xl sm:text-2xl group-hover:scale-110 transition-transform"></i>}
                                             <input type="file" accept="image/*" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer" title="Upload Photo" />
                                     </div>
-                                    <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Upload Profile Photo</p>
+                                    <p className="text-[9px] sm:text-[10px] text-blue-400 font-bold uppercase tracking-widest">Upload Profile Photo</p>
                                 </div>
-                                <input placeholder="Nama Lengkap" className="md:col-span-2 p-4 os-input rounded-xl text-xs" onChange={e => setRegForm({...regForm, fullName: e.target.value})} required />
-                                <input placeholder="Nama Panggilan" className="p-4 os-input rounded-xl text-xs" onChange={e => setRegForm({...regForm, nickname: e.target.value})} required />
-                                <select className="p-4 os-input rounded-xl text-xs outline-none" onChange={e => setRegForm({...regForm, position: e.target.value})} required>
+                                <input placeholder="Nama Lengkap" className="md:col-span-2 p-3 sm:p-4 os-input rounded-xl text-xs" onChange={e => setRegForm({...regForm, fullName: e.target.value})} required />
+                                <input placeholder="Nama Panggilan" className="p-3 sm:p-4 os-input rounded-xl text-xs" onChange={e => setRegForm({...regForm, nickname: e.target.value})} required />
+                                <select className="p-3 sm:p-4 os-input rounded-xl text-xs outline-none" onChange={e => setRegForm({...regForm, position: e.target.value})} required>
                                     <option value="">Pilih Jabatan</option>{jabatanOptions.map(j => <option key={j} value={j} className="text-black">{j}</option>)}
                                 </select>
-                                <input placeholder="NIK" className="p-4 os-input rounded-xl text-xs" onChange={e => setRegForm({...regForm, nik: e.target.value})} required />
-                                <input placeholder="username akun" className="p-4 os-input rounded-xl text-xs" onChange={e => setRegForm({...regForm, user: e.target.value})} required />
+                                <input placeholder="NIK" className="p-3 sm:p-4 os-input rounded-xl text-xs" onChange={e => setRegForm({...regForm, nik: e.target.value})} required />
+                                <input placeholder="username akun" className="p-3 sm:p-4 os-input rounded-xl text-xs" onChange={e => setRegForm({...regForm, user: e.target.value})} required />
                                 <div className="relative md:col-span-2">
                                     <input 
                                         type={showRegPassword ? "text" : "password"} 
                                         placeholder="Password" 
-                                        className="w-full p-4 pr-12 os-input rounded-xl text-xs" 
+                                        className="w-full p-3 sm:p-4 pr-12 os-input rounded-xl text-xs" 
                                         onChange={e => setRegForm({...regForm, pass: e.target.value})} 
                                         required 
                                     />
                                     <button 
                                         type="button"
                                         onClick={() => setShowRegPassword(!showRegPassword)}
-                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors outline-none"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors outline-none"
                                         title={showRegPassword ? "Sembunyikan Password" : "Tampilkan Password"}
                                     >
                                         <i className={`fas fa-${showRegPassword ? 'eye-slash' : 'eye'}`}></i>
                                     </button>
                                 </div>
-                                <button className="md:col-span-2 btn-orange py-4 rounded-xl text-xs font-black uppercase tracking-widest shadow-xl">Kirim Registrasi</button>
-                                <button type="button" onClick={() => setView('login')} className="md:col-span-2 text-center text-[10px] text-slate-500 font-bold uppercase mt-2 hover:text-white transition-colors">Batal</button>
+                                <button className="md:col-span-2 btn-orange py-3.5 sm:py-4 rounded-xl text-xs font-black uppercase tracking-widest shadow-xl mt-2">Kirim Registrasi</button>
+                                <button type="button" onClick={() => setView('login')} className="md:col-span-2 text-center text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase mt-1 hover:text-white transition-colors">Batal</button>
                             </form>
                         </div>
                     )}
 
                     {view === 'attendance' && (
-                        <div className="w-full max-w-md animate-in flex flex-col gap-6 pb-20">
-                            <div className="flex justify-between items-center px-4">
-                                <button onClick={resetToDashboard} className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 shadow-lg active:scale-90 hover:bg-white/10 transition-colors">
-                                    <i className="fas fa-arrow-left"></i>
+                        <div className="w-full max-w-md animate-in flex flex-col gap-4 sm:gap-6 pb-16 sm:pb-20">
+                            <div className="flex justify-between items-center px-2 sm:px-4">
+                                <button onClick={resetToDashboard} className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 shadow-lg active:scale-90 hover:bg-white/10 transition-colors">
+                                    <i className="fas fa-arrow-left text-xs sm:text-base"></i>
                                 </button>
-                                <div className="text-center">
-                                    <h3 className="text-white font-black uppercase text-xs tracking-widest">Sistem Presensi</h3>
-                                    <p className="text-[10px] text-orange-gradient font-black uppercase tracking-[0.2em]">{selectedDuration} • {presenceType}</p>
-                                    <div className={`mt-1 text-[8px] font-mono px-2 py-0.5 rounded border inline-block ${currentUser?.bypassGeo ? 'bg-emerald-900/50 border-emerald-500 text-emerald-400' : 'bg-rose-900/50 border-rose-500 text-rose-400'}`}>
-                                        STATUS GEMBOK: {currentUser?.bypassGeo ? "TERBUKA (UNLOCK)" : "TERTUTUP (LOCK)"}
+                                <div className="text-center flex-1">
+                                    <h3 className="text-white font-black uppercase text-[10px] sm:text-xs tracking-widest">Sistem Presensi</h3>
+                                    <p className="text-[8px] sm:text-[10px] text-orange-gradient font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] mt-0.5">{selectedDuration} • {presenceType}</p>
+                                    <div className={`mt-1.5 text-[7px] sm:text-[8px] font-mono px-2 py-0.5 rounded border inline-block ${currentUser?.bypassGeo ? 'bg-emerald-900/50 border-emerald-500 text-emerald-400' : 'bg-rose-900/50 border-rose-500 text-rose-400'}`}>
+                                        <i className={`fas fa-${currentUser?.bypassGeo ? 'unlock' : 'lock'} mr-1`}></i>
+                                        RADIUS: {currentUser?.bypassGeo ? "UNLOCK" : "LOCK"}
                                     </div>
                                 </div>
-                                <div className="w-10"></div>
+                                <div className="w-8 sm:w-10"></div>
                             </div>
 
-                            <div className="os-window p-6 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-24 bg-orange-500/5 blur-[60px] rounded-full pointer-events-none"></div>
+                            <div className="os-window p-4 sm:p-6 rounded-3xl sm:rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-16 sm:p-24 bg-orange-500/5 blur-[40px] sm:blur-[60px] rounded-full pointer-events-none"></div>
                                 
-                                <div className="video-container mb-6 shadow-2xl bg-black flex items-center justify-center relative overflow-hidden rounded-2xl border border-white/10 ring-1 ring-white/10">
+                                <div className="video-container mb-4 sm:mb-6 shadow-2xl bg-black flex items-center justify-center relative overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 ring-1 ring-white/10">
                                     
                                     {isRequestingCamera && (
                                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 z-20 animate-in">
-                                            <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                                            <p className="text-white text-[10px] font-black tracking-widest uppercase animate-pulse">Menunggu Izin Kamera...</p>
-                                            <p className="text-emerald-400 text-[8px] mt-2 uppercase font-bold text-center px-4">Silahkan klik "Allow/Izinkan" pada pop-up browser Anda</p>
+                                            <div className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-3 sm:mb-4"></div>
+                                            <p className="text-white text-[9px] sm:text-[10px] font-black tracking-widest uppercase animate-pulse">Menunggu Kamera...</p>
+                                            <p className="text-emerald-400 text-[7px] sm:text-[8px] mt-1.5 sm:mt-2 uppercase font-bold text-center px-4">Silahkan klik "Allow/Izinkan" pada pop-up</p>
                                         </div>
                                     )}
 
@@ -1821,23 +1826,23 @@
                                     ) : fallbackImage ? (
                                         <img src={fallbackImage} className="w-full h-full object-cover transform scale-x-[-1]" alt="Captured" />
                                     ) : (
-                                        <div className="w-full h-full flex flex-col items-center justify-center bg-black/80 p-4 text-center z-10 relative">
-                                            <i className="fas fa-video-slash text-rose-500 text-4xl mb-3"></i>
-                                            <p className="text-[10px] text-white font-black mb-1 uppercase tracking-widest">AKSES LIVE KAMERA GAGAL</p>
-                                            <p className="text-[8px] text-rose-300 mb-5 px-2 leading-relaxed">{cameraErrorMsg}</p>
+                                        <div className="w-full h-full flex flex-col items-center justify-center bg-black/80 p-3 sm:p-4 text-center z-10 relative">
+                                            <i className="fas fa-video-slash text-rose-500 text-3xl sm:text-4xl mb-2 sm:mb-3"></i>
+                                            <p className="text-[9px] sm:text-[10px] text-white font-black mb-1 uppercase tracking-widest">AKSES LIVE KAMERA GAGAL</p>
+                                            <p className="text-[7px] sm:text-[8px] text-rose-300 mb-4 sm:mb-5 px-2 leading-relaxed">{cameraErrorMsg}</p>
                                             
-                                            <button onClick={startCamera} className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-transform mb-3 w-full max-w-[220px]">
-                                                <i className="fas fa-sync-alt mr-2"></i> IZINKAN & COBA LAGI
+                                            <button onClick={startCamera} className="bg-blue-600 hover:bg-blue-500 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-transform mb-2 sm:mb-3 w-full max-w-[200px] sm:max-w-[220px]">
+                                                <i className="fas fa-sync-alt mr-2"></i> COBA LAGI
                                             </button>
 
-                                            <div className="w-full max-w-[220px] flex items-center justify-center gap-2 mb-3 opacity-40">
+                                            <div className="w-full max-w-[200px] sm:max-w-[220px] flex items-center justify-center gap-2 mb-2 sm:mb-3 opacity-40">
                                                 <div className="h-px bg-white flex-1"></div>
-                                                <span className="text-[7px] text-white uppercase font-bold tracking-widest">ATAU (JIKA TETAP GAGAL)</span>
+                                                <span className="text-[6px] sm:text-[7px] text-white uppercase font-bold tracking-widest">ATAU</span>
                                                 <div className="h-px bg-white flex-1"></div>
                                             </div>
 
-                                            <label className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-5 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest cursor-pointer shadow-lg active:scale-95 transition-transform w-full max-w-[220px] text-center block">
-                                                <i className="fas fa-camera mr-2"></i> BUKA KAMERA BAWAAN
+                                            <label className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-widest cursor-pointer shadow-lg active:scale-95 transition-transform w-full max-w-[200px] sm:max-w-[220px] text-center block">
+                                                <i className="fas fa-camera mr-2"></i> BUKA KAMERA HP
                                                 <input type="file" accept="image/*" capture="user" className="hidden" onChange={handleNativeCamera} />
                                             </label>
                                         </div>
@@ -1845,44 +1850,44 @@
 
                                     {(!cameraFailed || fallbackImage) && (
                                         <>
-                                            <div className="absolute inset-0 border-[4px] border-white/10 rounded-[1.3rem] pointer-events-none z-20"></div>
+                                            <div className="absolute inset-0 border-[3px] sm:border-[4px] border-white/10 rounded-[1rem] sm:rounded-[1.3rem] pointer-events-none z-20"></div>
                                             
-                                            <div className="absolute top-4 left-4 flex flex-col gap-1.5 z-30 pointer-events-none">
-                                                <div className={`bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2 ${isOutOfRange ? 'text-rose-400' : 'text-emerald-400'}`}>
-                                                    <i className="fas fa-satellite-dish text-[10px]"></i>
-                                                    <span className="text-[9px] font-black tracking-widest uppercase">
+                                            <div className="absolute top-3 left-3 sm:top-4 sm:left-4 flex flex-col gap-1 sm:gap-1.5 z-30 pointer-events-none">
+                                                <div className={`bg-black/60 backdrop-blur-sm px-2 py-1 sm:px-3 sm:py-1.5 rounded-md sm:rounded-lg border border-white/10 flex items-center gap-1.5 sm:gap-2 ${isOutOfRange ? 'text-rose-400' : 'text-emerald-400'}`}>
+                                                    <i className="fas fa-satellite-dish text-[8px] sm:text-[10px]"></i>
+                                                    <span className="text-[7px] sm:text-[9px] font-black tracking-widest uppercase">
                                                         {distanceToTarget !== null ? `${distanceToTarget.toFixed(3)} KM` : 'Locating...'}
                                                     </span>
                                                 </div>
-                                                <div className={`bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2 ${isGpsPoor ? 'text-amber-400' : 'text-blue-400'}`}>
-                                                    <i className="fas fa-crosshairs text-[10px]"></i>
-                                                    <span className="text-[9px] font-black tracking-widest uppercase">
+                                                <div className={`bg-black/60 backdrop-blur-sm px-2 py-1 sm:px-3 sm:py-1.5 rounded-md sm:rounded-lg border border-white/10 flex items-center gap-1.5 sm:gap-2 ${isGpsPoor ? 'text-amber-400' : 'text-blue-400'}`}>
+                                                    <i className="fas fa-crosshairs text-[8px] sm:text-[10px]"></i>
+                                                    <span className="text-[7px] sm:text-[9px] font-black tracking-widest uppercase">
                                                         Acc: {coords.accuracy ? Math.round(coords.accuracy) : '--'}M
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            <div className="absolute top-4 right-4 z-30 pointer-events-none">
-                                                <div className="bg-emerald-600/90 px-2.5 py-1 rounded-md flex items-center gap-2 shadow-lg border border-emerald-400/50">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></div>
-                                                    <span className="text-[8px] text-white font-black uppercase tracking-tighter">System Online</span>
+                                            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 pointer-events-none">
+                                                <div className="bg-emerald-600/90 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded flex items-center gap-1.5 sm:gap-2 shadow-lg border border-emerald-400/50">
+                                                    <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-white animate-ping"></div>
+                                                    <span className="text-[6px] sm:text-[8px] text-white font-black uppercase tracking-tighter">Online</span>
                                                 </div>
                                             </div>
 
                                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none opacity-20">
-                                                <p className="text-white font-black text-4xl uppercase tracking-[0.5em] select-none">DPPI</p>
+                                                <p className="text-white font-black text-3xl sm:text-4xl uppercase tracking-[0.5em] select-none ml-2">DPPI</p>
                                             </div>
 
-                                            <div className="absolute bottom-4 left-4 right-4 z-30 pointer-events-none flex justify-between items-end">
-                                                <div className="bg-black/60 backdrop-blur-md px-3 py-2 rounded-xl border border-white/10 shadow-lg">
-                                                    <p className="text-[7px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Coordinates</p>
-                                                    <p className="text-[9px] text-white font-mono font-black tracking-tighter leading-none">
-                                                        {coords.lat ? coords.lat.toFixed(6) : '--.------'}, {coords.lng ? coords.lng.toFixed(6) : '--.------'}
+                                            <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 z-30 pointer-events-none flex flex-wrap justify-between items-end gap-1">
+                                                <div className="bg-black/60 backdrop-blur-md px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl border border-white/10 shadow-lg">
+                                                    <p className="text-[6px] sm:text-[7px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Coordinates</p>
+                                                    <p className="text-[7px] sm:text-[9px] text-white font-mono font-black tracking-tighter leading-none">
+                                                        {coords.lat ? coords.lat.toFixed(5) : '--.-----'}, {coords.lng ? coords.lng.toFixed(5) : '--.-----'}
                                                     </p>
                                                 </div>
-                                                <div className="bg-rose-600/80 px-2 py-0.5 rounded-md flex items-center gap-1.5 border border-rose-400/40">
+                                                <div className="bg-rose-600/80 px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded flex items-center gap-1 sm:gap-1.5 border border-rose-400/40">
                                                     <div className="w-1 h-1 rounded-full bg-white"></div>
-                                                    <span className="text-[7px] text-white font-black uppercase">Live</span>
+                                                    <span className="text-[6px] sm:text-[7px] text-white font-black uppercase">Live</span>
                                                 </div>
                                             </div>
                                         </>
@@ -1890,27 +1895,27 @@
                                 </div>
 
                                 {presenceType !== 'Izin' && (
-                                    <div className="mb-6 animate-in">
+                                    <div className="mb-4 sm:mb-6 animate-in">
                                         <div className="flex justify-between items-center mb-2">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest"><i className="fas fa-map-marker-alt text-orange-500 mr-1"></i> Lokasi GPS</p>
-                                            <button onClick={handleRefreshGPS} className="text-[9px] bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded font-bold uppercase tracking-wider transition-colors border border-white/10"><i className="fas fa-sync-alt mr-1"></i>Refresh</button>
+                                            <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest"><i className="fas fa-map-marker-alt text-orange-500 mr-1"></i> Lokasi GPS</p>
+                                            <button onClick={handleRefreshGPS} className="text-[8px] sm:text-[9px] bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded font-bold uppercase tracking-wider transition-colors border border-white/10"><i className="fas fa-sync-alt mr-1"></i>Refresh</button>
                                         </div>
                                         {locationErrorMsg ? (
-                                            <div className="bg-rose-500/10 border border-rose-500/30 p-4 rounded-xl text-center">
-                                                <p className="text-[10px] text-rose-400 font-bold uppercase mb-1"><i className="fas fa-satellite-dish mr-1"></i> Sinyal GPS Hilang</p>
-                                                <p className="text-[9px] text-slate-400">{locationErrorMsg}</p>
+                                            <div className="bg-rose-500/10 border border-rose-500/30 p-3 sm:p-4 rounded-xl text-center">
+                                                <p className="text-[9px] sm:text-[10px] text-rose-400 font-bold uppercase mb-1"><i className="fas fa-satellite-dish mr-1"></i> Sinyal GPS Hilang</p>
+                                                <p className="text-[8px] sm:text-[9px] text-slate-400">{locationErrorMsg}</p>
                                             </div>
                                         ) : (
-                                            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-lg bg-slate-900">
-                                                <div id="user-map" className="w-full h-[150px]"></div>
+                                            <div className="relative rounded-xl sm:rounded-2xl overflow-hidden border border-white/10 shadow-lg bg-slate-900">
+                                                <div id="user-map" className="w-full h-[120px] sm:h-[150px]"></div>
                                             </div>
                                         )}
                                     </div>
                                 )}
 
                                 {(presenceType === 'Izin' || selectedDuration === 'Khusus' || selectedDuration === 'Ekstra') && (
-                                    <div className="mb-6">
-                                        <label className="text-[10px] font-black uppercase tracking-widest ml-2 flex items-center gap-2 mb-2">
+                                    <div className="mb-4 sm:mb-6">
+                                        <label className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest ml-1 sm:ml-2 flex items-center gap-2 mb-1.5 sm:mb-2">
                                             <span className={selectedDuration === 'Khusus' ? 'text-cyan-400' : (selectedDuration === 'Ekstra' ? 'text-orange-400' : 'text-purple-400')}>
                                                 {presenceType === 'Izin' ? 'Alasan Izin' : `Detail Tugas ${selectedDuration}`} <span className="text-rose-500">*</span>
                                             </span>
@@ -1918,7 +1923,7 @@
                                         <textarea
                                             value={permitReason}
                                             onChange={(e) => setPermitReason(e.target.value)}
-                                            className="w-full p-4 os-input rounded-2xl text-xs resize-none h-24 shadow-inner"
+                                            className="w-full p-3 sm:p-4 os-input rounded-xl sm:rounded-2xl text-xs resize-none h-20 sm:h-24 shadow-inner"
                                             placeholder={presenceType === 'Izin' ? "Sakit / Cuti / Urusan Keluarga..." : "Tuliskan laporan tugas singkat..."}
                                             required
                                         ></textarea>
@@ -1926,21 +1931,21 @@
                                 )}
 
                                 {isOutOfRange && presenceType !== 'Izin' && (
-                                    <div className="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl mb-6 text-center animate-pulse">
-                                        <p className="text-[9px] text-amber-400 font-bold uppercase tracking-widest"><i className="fas fa-exclamation-triangle mr-1"></i> Di Luar Radius Kantor (&gt;500m)</p>
+                                    <div className="bg-amber-500/10 border border-amber-500/30 p-2.5 sm:p-3 rounded-xl mb-4 sm:mb-6 text-center animate-pulse">
+                                        <p className="text-[8px] sm:text-[9px] text-amber-400 font-bold uppercase tracking-widest"><i className="fas fa-exclamation-triangle mr-1"></i> Di Luar Radius Kantor (&gt;500m)</p>
                                     </div>
                                 )}
                                 {isGpsPoor && presenceType !== 'Izin' && (
-                                    <div className="bg-rose-500/10 border border-rose-500/30 p-3 rounded-xl mb-6 text-center animate-pulse">
-                                        <p className="text-[9px] text-rose-400 font-bold uppercase tracking-widest"><i className="fas fa-signal mr-1"></i> GPS Lemah. Cari area terbuka.</p>
+                                    <div className="bg-rose-500/10 border border-rose-500/30 p-2.5 sm:p-3 rounded-xl mb-4 sm:mb-6 text-center animate-pulse">
+                                        <p className="text-[8px] sm:text-[9px] text-rose-400 font-bold uppercase tracking-widest"><i className="fas fa-signal mr-1"></i> GPS Lemah. Cari area terbuka.</p>
                                     </div>
                                 )}
 
                                 {(distanceToTarget > 0.5 && currentUser?.bypassGeo && presenceType !== 'Izin') && (
-                                    <div className="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl mb-6 flex items-center gap-3 animate-in">
-                                        <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0"><i className="fas fa-unlock"></i></div>
-                                        <p className="text-[9px] text-emerald-200 font-bold leading-snug">
-                                            INFO: Anda berada di luar radius, namun <span className="text-white">Admin telah membuka gembok akses</span> untuk Anda.
+                                    <div className="bg-emerald-500/10 border border-emerald-500/30 p-2.5 sm:p-3 rounded-xl mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3 animate-in">
+                                        <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0"><i className="fas fa-unlock text-xs"></i></div>
+                                        <p className="text-[8px] sm:text-[9px] text-emerald-200 font-bold leading-snug">
+                                            INFO: Anda berada di luar radius, namun <span className="text-white">Admin membuka gembok akses</span> untuk Anda.
                                         </p>
                                     </div>
                                 )}
@@ -1948,16 +1953,16 @@
                                 <button
                                     onClick={doAbsen}
                                     disabled={isLoading || (presenceType !== 'Izin' && isLocationMissing)}
-                                    className={`w-full py-5 rounded-2xl text-xs font-black uppercase tracking-[0.3em] transition-all shadow-2xl flex items-center justify-center gap-3 ${
+                                    className={`w-full py-4 sm:py-5 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] transition-all shadow-2xl flex items-center justify-center gap-2 sm:gap-3 ${
                                         isLoading || (presenceType !== 'Izin' && isLocationMissing) ? 'btn-disabled opacity-50 cursor-not-allowed' : 'btn-orange hover:scale-[1.02]'
                                     }`}
                                 >
                                     {isLoading ? (
-                                        <div className="loader"></div>
+                                        <div className="loader border-black/20 border-t-black w-4 h-4 border-2"></div>
                                     ) : (presenceType !== 'Izin' && isLocationMissing) ? (
-                                        <><i className="fas fa-location-crosshairs animate-spin text-white text-lg"></i> MENCARI LOKASI...</>
+                                        <><i className="fas fa-location-crosshairs animate-spin text-white text-base sm:text-lg"></i> MENCARI LOKASI...</>
                                     ) : (
-                                        <><i className={`fas fa-${isOutOfRange && !currentUser?.bypassGeo ? 'times-circle' : 'fingerprint'} text-lg`}></i> {isOutOfRange && !currentUser?.bypassGeo ? 'OUT OF RADIUS' : 'SUBMIT PRESENSI'}</>
+                                        <><i className={`fas fa-${isOutOfRange && !currentUser?.bypassGeo ? 'times-circle' : 'fingerprint'} text-base sm:text-lg`}></i> {isOutOfRange && !currentUser?.bypassGeo ? 'OUT OF RADIUS' : 'SUBMIT PRESENSI'}</>
                                     )}
                                 </button>
                             </div>
@@ -1965,89 +1970,94 @@
                     )}
 
                     {view === 'dashboard' && currentUser && (
-                        <div className="w-full max-w-6xl animate-in flex flex-col gap-6 h-full pb-10">
-                            <div className="os-window p-4 md:p-6 rounded-[2rem] flex justify-between items-center shadow-lg border border-white/5 relative">
-                                <div className="flex items-center gap-4 cursor-pointer group" onClick={openProfileModal} title="Klik untuk Edit Profil">
-                                    <div className="relative">
-                                         <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl border-2 border-orange-400/20 overflow-hidden shrink-0 bg-black group-hover:border-orange-400 transition-all shadow-xl">
+                        <div className="w-full max-w-6xl animate-in flex flex-col gap-4 sm:gap-6 h-full pb-10">
+                            {/* --- DASHBOARD HEADER --- */}
+                            <div className="os-window p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] flex justify-between items-center shadow-lg border border-white/5 relative">
+                                <div className="flex items-center gap-3 md:gap-4 cursor-pointer group flex-1 min-w-0 pr-2" onClick={openProfileModal} title="Klik untuk Edit Profil">
+                                    <div className="relative shrink-0">
+                                         <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl border-2 border-orange-400/20 overflow-hidden bg-black group-hover:border-orange-400 transition-all shadow-xl">
                                              <img src={currentUser.profilePic} className="w-full h-full object-cover" alt="Avatar" />
                                          </div>
-                                         <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center text-black text-[8px] border border-black shadow-sm group-hover:scale-110 transition-transform">
+                                         <div className="absolute -bottom-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-orange-500 rounded-full flex items-center justify-center text-black text-[7px] md:text-[8px] border border-black shadow-sm group-hover:scale-110 transition-transform">
                                              <i className="fas fa-pen"></i>
                                          </div>
                                     </div>
-                                    <div className="min-w-0 pr-4">
-                                            <h2 className="font-extrabold text-white text-base md:text-lg group-hover:text-orange-400 transition-colors truncate">{currentUser.fullName}</h2>
-                                            <div className="flex items-center gap-2">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-[0.2em] truncate">{currentUser.position}</p>
+                                    <div className="min-w-0 flex-1">
+                                            <h2 className="font-extrabold text-white text-sm md:text-lg group-hover:text-orange-400 transition-colors truncate">{currentUser.fullName}</h2>
+                                            <div className="flex items-center gap-1.5 md:gap-2">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                                                <p className="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-[0.1em] md:tracking-[0.2em] truncate">{currentUser.position}</p>
                                             </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2 md:gap-4">
-                                    <div className="flex flex-col items-center mr-3 md:border-l md:border-white/10 pl-2 md:pl-4">
-                                            <img src={logoUrl} alt="Logo" className="h-10 w-10 md:h-12 md:w-12 object-contain logo-hologram" />
-                                            <span className="hidden md:block text-[7px] text-orange-400/60 font-black uppercase mt-1 tracking-[0.2em]">DPPI OFFICIAL</span>
+                                <div className="flex items-center gap-2 md:gap-4 shrink-0">
+                                    <div className="flex flex-col items-center mr-2 md:mr-3 md:border-l md:border-white/10 pl-2 md:pl-4 hidden sm:flex">
+                                            <img src={logoUrl} alt="Logo" className="h-8 w-8 md:h-12 md:w-12 object-contain logo-hologram" />
+                                            <span className="text-[6px] md:text-[7px] text-orange-400/60 font-black uppercase mt-1 tracking-[0.2em]">DPPI OFFICIAL</span>
                                     </div>
-                                    <button onClick={syncData} className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-orange-500/10 text-orange-400 border border-orange-500/20 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all shadow-lg active:scale-90"><i className={`fas fa-sync ${isHistoryLoading ? 'animate-spin' : ''}`}></i></button>
-                                    <button onClick={() => setView('login')} className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-lg active:scale-90"><i className="fas fa-power-off"></i></button>
+                                    <button onClick={syncData} className="w-9 h-9 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-orange-500/10 text-orange-400 border border-orange-500/20 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all shadow-lg active:scale-90"><i className={`fas fa-sync text-xs md:text-base ${isHistoryLoading ? 'animate-spin' : ''}`}></i></button>
+                                    <button onClick={() => setView('login')} className="w-9 h-9 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-lg active:scale-90"><i className="fas fa-power-off text-xs md:text-base"></i></button>
                                 </div>
                             </div>
 
-                            <div className="flex justify-center gap-4">
-                                <button onClick={() => setDashTab('presence')} className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg ${dashTab === 'presence' ? 'bg-orange-500 text-black scale-105' : 'bg-white/10 text-slate-400 hover:bg-white/20'}`}><i className="fas fa-fingerprint mr-2"></i> Dashboard Presensi</button>
-                                <button onClick={() => setDashTab('agenda')} className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg ${dashTab === 'agenda' ? 'bg-blue-600 text-white scale-105' : 'bg-white/10 text-slate-400 hover:bg-white/20'}`}><i className="fas fa-list-check mr-2"></i> Dashboard Agenda</button>
+                            {/* --- DASHBOARD TABS (Tweak for small screens) --- */}
+                            <div className="flex justify-center gap-2 sm:gap-4 w-full px-2 sm:px-0">
+                                <button onClick={() => setDashTab('presence')} className={`flex-1 sm:flex-none px-2 sm:px-8 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-1 sm:gap-2 ${dashTab === 'presence' ? 'bg-orange-500 text-black sm:scale-105' : 'bg-white/10 text-slate-400 hover:bg-white/20'}`}><i className="fas fa-fingerprint"></i> Presensi</button>
+                                <button onClick={() => setDashTab('agenda')} className={`flex-1 sm:flex-none px-2 sm:px-8 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-1 sm:gap-2 ${dashTab === 'agenda' ? 'bg-blue-600 text-white sm:scale-105' : 'bg-white/10 text-slate-400 hover:bg-white/20'}`}><i className="fas fa-list-check"></i> Agenda</button>
                             </div>
 
                             {dashTab === 'presence' ? (
-                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in">
+                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 animate-in">
                                     <div className="lg:col-span-7">
                                         {renderPresenceButtons()}
                                     </div>
 
                                     <div className="lg:col-span-5 flex flex-col gap-4">
-                                            <div className="os-window flex-1 p-6 rounded-[2rem] flex flex-col min-h-[400px] border border-white/5">
+                                            <div className="os-window flex-1 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] flex flex-col min-h-[400px] border border-white/5">
                                                 
-                                            <div className="bg-white/5 p-4 rounded-xl border border-white/5 mb-4 animate-in">
+                                            <div className="bg-white/5 p-3 sm:p-4 rounded-xl border border-white/5 mb-4 animate-in">
                                                 <div className="flex justify-between items-center mb-2">
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest"><i className="fas fa-filter mr-1"></i> Filter Spesifik</p>
+                                                    <p className="text-[8px] sm:text-[9px] font-black text-slate-400 uppercase tracking-widest"><i className="fas fa-filter mr-1"></i> Filter Spesifik</p>
                                                 </div>
-                                                <div className="grid grid-cols-4 gap-2">
-                                                    <input type="text" list="day-list" value={filterDay} onChange={(e) => setFilterDay(e.target.value)} placeholder="Tgl" className="col-span-1 p-2 os-input rounded-lg text-[10px] font-bold outline-none w-full text-center" /><datalist id="day-list">{days.map(d => <option key={d} value={d} />)}</datalist>
-                                                    <input type="text" list="month-list" value={filterMonth} onChange={(e) => setFilterMonth(e.target.value)} placeholder="Bulan" className="col-span-1 p-2 os-input rounded-lg text-[10px] font-bold outline-none w-full text-center" /><datalist id="month-list">{monthsNames.map((m, i) => <option key={i} value={m} />)}</datalist>
-                                                    <input type="text" list="year-list" value={filterYear} onChange={(e) => setFilterYear(e.target.value)} placeholder="Thn" className="col-span-1 p-2 os-input rounded-lg text-[10px] font-bold outline-none w-full text-center" /><datalist id="year-list">{years.map(y => <option key={y} value={y} />)}</datalist>
-                                                    <button onClick={resetDateFilters} className="col-span-1 bg-white/10 hover:bg-white/20 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors"><i className="fas fa-undo"></i> Reset</button>
+                                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                                    <input type="text" list="day-list" value={filterDay} onChange={(e) => setFilterDay(e.target.value)} placeholder="Tgl" className="w-full p-2 os-input rounded-lg text-[9px] sm:text-[10px] font-bold outline-none text-center" /><datalist id="day-list">{days.map(d => <option key={d} value={d} />)}</datalist>
+                                                    <input type="text" list="month-list" value={filterMonth} onChange={(e) => setFilterMonth(e.target.value)} placeholder="Bulan" className="w-full p-2 os-input rounded-lg text-[9px] sm:text-[10px] font-bold outline-none text-center" /><datalist id="month-list">{monthsNames.map((m, i) => <option key={i} value={m} />)}</datalist>
+                                                    <input type="text" list="year-list" value={filterYear} onChange={(e) => setFilterYear(e.target.value)} placeholder="Thn" className="w-full p-2 os-input rounded-lg text-[9px] sm:text-[10px] font-bold outline-none text-center" /><datalist id="year-list">{years.map(y => <option key={y} value={y} />)}</datalist>
+                                                    <button onClick={resetDateFilters} className="w-full bg-white/10 hover:bg-white/20 text-white rounded-lg text-[9px] sm:text-[10px] font-black uppercase tracking-wider transition-colors py-2"><i className="fas fa-undo"></i> Reset</button>
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-wrap items-center justify-between mb-4 border-b border-white/5 pb-3 gap-2">
-                                                <div className="flex items-center gap-3"><p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Log Activity</p><button onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')} className="px-3 py-1 rounded bg-white/5 flex items-center justify-center gap-2 text-[9px] text-orange-400 hover:bg-white/10 transition-colors border border-white/5"><span className="font-bold uppercase tracking-wider">{sortOrder === 'desc' ? 'Terbaru' : 'Terlama'}</span><i className={`fas fa-sort-amount-${sortOrder === 'desc' ? 'down' : 'up'}`}></i></button></div>
+                                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 border-b border-white/5 pb-3 gap-3">
+                                                <div className="flex items-center justify-between w-full sm:w-auto gap-3">
+                                                    <p className="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] sm:tracking-[0.3em]">Log Activity</p>
+                                                    <button onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')} className="px-2.5 py-1 rounded bg-white/5 flex items-center justify-center gap-1.5 text-[8px] sm:text-[9px] text-orange-400 hover:bg-white/10 transition-colors border border-white/5"><span className="font-bold uppercase tracking-wider">{sortOrder === 'desc' ? 'Terbaru' : 'Terlama'}</span><i className={`fas fa-sort-amount-${sortOrder === 'desc' ? 'down' : 'up'}`}></i></button>
+                                                </div>
                                                 
                                                 {logViewMode !== 'months' && (
-                                                    <div className="flex gap-2 flex-wrap animate-in">
-                                                         <button onClick={() => handleFilterChange('all')} className={`text-[8px] font-black px-3 py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'all' ? 'bg-orange-500 text-black shadow-lg shadow-orange-500/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>ALL</button>
-                                                         <button onClick={() => handleFilterChange('full')} className={`text-[8px] font-black px-3 py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'full' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>FULL</button>
-                                                         <button onClick={() => handleFilterChange('half')} className={`text-[8px] font-black px-3 py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'half' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>HALF</button>
-                                                         <button onClick={() => handleFilterChange('izin')} className={`text-[8px] font-black px-3 py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'izin' ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>IZIN</button>
-                                                         <button onClick={() => handleFilterChange('khusus')} className={`text-[8px] font-black px-3 py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'khusus' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>KHUSUS</button>
-                                                         <button onClick={() => handleFilterChange('ekstra')} className={`text-[8px] font-black px-3 py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'ekstra' ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>EKSTRA</button>
+                                                    <div className="flex gap-1.5 sm:gap-2 flex-wrap animate-in w-full sm:w-auto justify-start">
+                                                         <button onClick={() => handleFilterChange('all')} className={`text-[7px] sm:text-[8px] font-black px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'all' ? 'bg-orange-500 text-black shadow-lg shadow-orange-500/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>ALL</button>
+                                                         <button onClick={() => handleFilterChange('full')} className={`text-[7px] sm:text-[8px] font-black px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'full' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>FULL</button>
+                                                         <button onClick={() => handleFilterChange('half')} className={`text-[7px] sm:text-[8px] font-black px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'half' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>HALF</button>
+                                                         <button onClick={() => handleFilterChange('izin')} className={`text-[7px] sm:text-[8px] font-black px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'izin' ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>IZIN</button>
+                                                         <button onClick={() => handleFilterChange('khusus')} className={`text-[7px] sm:text-[8px] font-black px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'khusus' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>KH</button>
+                                                         <button onClick={() => handleFilterChange('ekstra')} className={`text-[7px] sm:text-[8px] font-black px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg transition-all border border-white/5 tracking-wider ${filterType === 'ekstra' ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20' : 'bg-white/5 text-slate-400 hover:text-white'}`}>EX</button>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            <div className="overflow-y-auto flex-1 custom-scrollbar pr-2">
-                                                {isHistoryLoading ? (<div className="flex justify-center items-center h-20"><div className="loader"></div></div>) : presences.length === 0 ? (<p className="text-center text-[10px] text-slate-600 mt-10 uppercase font-black tracking-widest">No Activity Record Found</p>) : (
+                                            <div className="overflow-y-auto flex-1 custom-scrollbar pr-1 sm:pr-2">
+                                                {isHistoryLoading ? (<div className="flex justify-center items-center h-20"><div className="loader"></div></div>) : presences.length === 0 ? (<p className="text-center text-[9px] sm:text-[10px] text-slate-600 mt-10 uppercase font-black tracking-widest">No Activity Record Found</p>) : (
                                                     <>
                                                         {logViewMode === 'months' && (
-                                                            <div className="space-y-3 animate-in">
-                                                                {availableMonths.length === 0 ? (<p className="text-center text-[10px] text-slate-500 mt-5 italic">Tidak ada data untuk filter ini</p>) : availableMonths.map((m, idx) => (
-                                                                    <div key={idx} onClick={() => handleMonthClick(m.key)} className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 hover:border-orange-400/30 transition-all cursor-pointer group flex justify-between items-center">
-                                                                        <div className="flex items-center gap-4">
-                                                                            <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 border border-orange-500/20"><i className="fas fa-calendar-alt"></i></div>
-                                                                            <div>
-                                                                                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Periode</div>
-                                                                                <div className="text-sm font-bold text-white uppercase leading-none">{m.label}</div>
-                                                                                <div className="flex gap-2 mt-1.5 text-[8px] font-black uppercase tracking-wider">
+                                                            <div className="space-y-2 sm:space-y-3 animate-in">
+                                                                {availableMonths.length === 0 ? (<p className="text-center text-[9px] sm:text-[10px] text-slate-500 mt-5 italic">Tidak ada data untuk filter ini</p>) : availableMonths.map((m, idx) => (
+                                                                    <div key={idx} onClick={() => handleMonthClick(m.key)} className="p-3 sm:p-4 bg-white/5 rounded-xl sm:rounded-2xl border border-white/5 hover:bg-white/10 hover:border-orange-400/30 transition-all cursor-pointer group flex justify-between items-center">
+                                                                        <div className="flex items-center gap-3 sm:gap-4">
+                                                                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-400 border border-orange-500/20 shrink-0"><i className="fas fa-calendar-alt text-xs sm:text-base"></i></div>
+                                                                            <div className="min-w-0">
+                                                                                <div className="text-[8px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Periode</div>
+                                                                                <div className="text-xs sm:text-sm font-bold text-white uppercase leading-none truncate">{m.label}</div>
+                                                                                <div className="flex gap-1 sm:gap-2 mt-1.5 flex-wrap text-[7px] sm:text-[8px] font-black uppercase tracking-wider">
                                                                                     <span className="text-blue-400 bg-blue-400/10 px-1 rounded border border-blue-400/20">F: {m.stats.fullTimeCount}</span>
                                                                                     <span className="text-amber-400 bg-amber-400/10 px-1 rounded border border-amber-400/20">H: {m.stats.halfDayCount}</span>
                                                                                     <span className="text-purple-400 bg-purple-400/10 px-1 rounded border border-purple-400/20">I: {m.stats.permitCount}</span>
@@ -2056,14 +2066,14 @@
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div className="flex items-center gap-3">
-                                                                            <div className="flex flex-col items-end gap-1">
+                                                                        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                                                                            <div className="flex flex-col items-end gap-1 hidden sm:flex">
                                                                                 <div className="flex items-center gap-1">
-                                                                                    <span className="text-[9px] bg-white/10 px-2 py-1 rounded text-slate-300 font-bold">{m.count} Item</span>
-                                                                                    <span className="text-[9px] bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded text-emerald-400 font-bold">{Math.floor(m.count / 2)} Set</span>
+                                                                                    <span className="text-[8px] sm:text-[9px] bg-white/10 px-2 py-1 rounded text-slate-300 font-bold">{m.count} Item</span>
+                                                                                    <span className="text-[8px] sm:text-[9px] bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded text-emerald-400 font-bold">{Math.floor(m.count / 2)} Set</span>
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-black transition-all"><i className="fas fa-chevron-right text-xs"></i></div>
+                                                                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-black transition-all"><i className="fas fa-chevron-right text-[10px] sm:text-xs"></i></div>
                                                                         </div>
                                                                     </div>
                                                                 ))}
@@ -2071,66 +2081,60 @@
                                                         )}
 
                                                         {logViewMode === 'days' && (
-                                                            <div className="space-y-3 animate-in">
-                                                                <div className="flex items-center gap-3 mb-4 cursor-pointer hover:text-white transition-colors group" onClick={handleBackToMonths}>
-                                                                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10"><i className="fas fa-arrow-left text-xs"></i></div>
-                                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-white">Kembali ke Bulan</p>
+                                                            <div className="space-y-2 sm:space-y-3 animate-in">
+                                                                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 cursor-pointer hover:text-white transition-colors group" onClick={handleBackToMonths}>
+                                                                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10"><i className="fas fa-arrow-left text-[10px] sm:text-xs"></i></div>
+                                                                    <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-white">Kembali</p>
                                                                 </div>
 
-                                                                <div className="grid grid-cols-2 gap-3 mb-6">
-                                                                    <div onClick={() => { handleFilterChange('all'); setShowDetailStats(!showDetailStats); }} className={`col-span-2 p-4 rounded-2xl border transition-all cursor-pointer group active:scale-95 ${filterType === 'all' ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-emerald-500/10 border-white/5 hover:border-emerald-500/30'}`}>
+                                                                <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6">
+                                                                    <div onClick={() => { handleFilterChange('all'); setShowDetailStats(!showDetailStats); }} className={`col-span-2 p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer group active:scale-95 ${filterType === 'all' ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-emerald-500/10 border-white/5 hover:border-emerald-500/30'}`}>
                                                                         <div className="flex justify-between items-start">
-                                                                            <p className="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-1">Total Presensi</p>
-                                                                            <div className="flex items-center gap-2">
-                                                                                <span className="text-[8px] text-slate-400 font-bold uppercase tracking-wider">{showDetailStats ? 'Tutup Detail' : 'Lihat Detail'}</span>
-                                                                                <i className={`fas fa-chevron-${showDetailStats ? 'up' : 'down'} text-[8px] text-emerald-400 transition-transform`}></i>
+                                                                            <p className="text-[8px] sm:text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-1">Total Presensi</p>
+                                                                            <div className="flex items-center gap-1 sm:gap-2">
+                                                                                <span className="text-[7px] sm:text-[8px] text-slate-400 font-bold uppercase tracking-wider">{showDetailStats ? 'Tutup Detail' : 'Lihat Detail'}</span>
+                                                                                <i className={`fas fa-chevron-${showDetailStats ? 'up' : 'down'} text-[7px] sm:text-[8px] text-emerald-400 transition-transform`}></i>
                                                                             </div>
                                                                         </div>
-                                                                        <div className="flex items-end gap-2"><p className="text-3xl font-black text-white leading-none">{monthStats.total}</p><span className="text-[9px] font-bold text-emerald-400/60 mb-1">Log Masuk</span></div>
+                                                                        <div className="flex items-end gap-1.5 sm:gap-2"><p className="text-2xl sm:text-3xl font-black text-white leading-none">{monthStats.total}</p><span className="text-[8px] sm:text-[9px] font-bold text-emerald-400/60 mb-0.5 sm:mb-1">Log</span></div>
                                                                     </div>
                                                                     
                                                                     {showDetailStats && (
                                                                         <>
-                                                                            <div onClick={() => handleFilterChange('full')} className={`p-4 rounded-2xl border transition-all cursor-pointer group active:scale-95 animate-in ${filterType === 'full' ? 'bg-blue-500/20 border-blue-500/50' : 'bg-blue-500/10 border-white/5 hover:border-blue-500/30'}`}>
-                                                                                <p className="text-[8px] font-black text-blue-400 uppercase tracking-widest mb-1">Total Full Day</p>
-                                                                                <div className="flex items-end gap-2"><p className="text-2xl font-black text-white leading-none">{monthStats.fullTimeCount}</p><span className="text-[8px] font-bold text-blue-400/60 mb-1">Log</span></div>
+                                                                            <div onClick={() => handleFilterChange('full')} className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer group active:scale-95 animate-in ${filterType === 'full' ? 'bg-blue-500/20 border-blue-500/50' : 'bg-blue-500/10 border-white/5 hover:border-blue-500/30'}`}>
+                                                                                <p className="text-[7px] sm:text-[8px] font-black text-blue-400 uppercase tracking-widest mb-1">Full Day</p>
+                                                                                <div className="flex items-end gap-1.5 sm:gap-2"><p className="text-xl sm:text-2xl font-black text-white leading-none">{monthStats.fullTimeCount}</p></div>
                                                                             </div>
 
-                                                                            <div onClick={() => handleFilterChange('half')} className={`p-4 rounded-2xl border transition-all cursor-pointer group active:scale-95 animate-in ${filterType === 'half' ? 'bg-amber-500/20 border-amber-500/50' : 'bg-amber-500/10 border-white/5 hover:border-amber-500/30'}`}>
-                                                                                <p className="text-[8px] font-black text-amber-400 uppercase tracking-widest mb-1">Total Half Day</p>
-                                                                                <div className="flex items-end gap-2"><p className="text-2xl font-black text-white leading-none">{monthStats.halfDayCount}</p><span className="text-[8px] font-bold text-amber-400/60 mb-1">Log</span></div>
+                                                                            <div onClick={() => handleFilterChange('half')} className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer group active:scale-95 animate-in ${filterType === 'half' ? 'bg-amber-500/20 border-amber-500/50' : 'bg-amber-500/10 border-white/5 hover:border-amber-500/30'}`}>
+                                                                                <p className="text-[7px] sm:text-[8px] font-black text-amber-400 uppercase tracking-widest mb-1">Half Day</p>
+                                                                                <div className="flex items-end gap-1.5 sm:gap-2"><p className="text-xl sm:text-2xl font-black text-white leading-none">{monthStats.halfDayCount}</p></div>
                                                                             </div>
                                                                             
-                                                                            <div onClick={() => handleFilterChange('izin')} className={`p-4 rounded-2xl border transition-all cursor-pointer group active:scale-95 animate-in ${filterType === 'izin' ? 'bg-purple-500/20 border-purple-500/50' : 'bg-purple-500/10 border-white/5 hover:border-purple-500/30'}`}>
-                                                                                <p className="text-[8px] font-black text-purple-400 uppercase tracking-widest mb-1">Total Izin</p>
-                                                                                <div className="flex items-end gap-2"><p className="text-2xl font-black text-white leading-none">{monthStats.permitCount}</p><span className="text-[8px] font-bold text-purple-400/60 mb-1">X</span></div>
+                                                                            <div onClick={() => handleFilterChange('izin')} className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer group active:scale-95 animate-in ${filterType === 'izin' ? 'bg-purple-500/20 border-purple-500/50' : 'bg-purple-500/10 border-white/5 hover:border-purple-500/30'}`}>
+                                                                                <p className="text-[7px] sm:text-[8px] font-black text-purple-400 uppercase tracking-widest mb-1">Izin</p>
+                                                                                <div className="flex items-end gap-1.5 sm:gap-2"><p className="text-xl sm:text-2xl font-black text-white leading-none">{monthStats.permitCount}</p></div>
                                                                             </div>
 
-                                                                            <div onClick={() => handleFilterChange('khusus')} className={`p-4 rounded-2xl border transition-all cursor-pointer group active:scale-95 animate-in ${filterType === 'khusus' ? 'bg-cyan-500/20 border-cyan-500/50' : 'bg-cyan-500/10 border-white/5 hover:border-cyan-500/30'}`}>
-                                                                                <p className="text-[8px] font-black text-cyan-400 uppercase tracking-widest mb-1">Total Khusus</p>
-                                                                                <div className="flex items-end gap-2"><p className="text-2xl font-black text-white leading-none">{monthStats.khususCount}</p><span className="text-[8px] font-bold text-cyan-400/60 mb-1">Log</span></div>
-                                                                            </div>
-
-                                                                            <div onClick={() => handleFilterChange('ekstra')} className={`p-4 rounded-2xl border transition-all cursor-pointer group active:scale-95 animate-in ${filterType === 'ekstra' ? 'bg-orange-500/20 border-orange-500/50' : 'bg-orange-500/10 border-white/5 hover:border-orange-500/30'}`}>
-                                                                                <p className="text-[8px] font-black text-orange-400 uppercase tracking-widest mb-1">Total Ekstra</p>
-                                                                                <div className="flex items-end gap-2"><p className="text-2xl font-black text-white leading-none">{monthStats.ekstraCount}</p><span className="text-[8px] font-bold text-orange-400/60 mb-1">Tgs</span></div>
+                                                                            <div onClick={() => handleFilterChange('khusus')} className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer group active:scale-95 animate-in ${filterType === 'khusus' ? 'bg-cyan-500/20 border-cyan-500/50' : 'bg-cyan-500/10 border-white/5 hover:border-cyan-500/30'}`}>
+                                                                                <p className="text-[7px] sm:text-[8px] font-black text-cyan-400 uppercase tracking-widest mb-1">Khusus</p>
+                                                                                <div className="flex items-end gap-1.5 sm:gap-2"><p className="text-xl sm:text-2xl font-black text-white leading-none">{monthStats.khususCount}</p></div>
                                                                             </div>
                                                                         </>
                                                                     )}
                                                                 </div>
                                                                 
-                                                                {availableDaysInMonth.length === 0 ? (<p className="text-center text-[10px] text-slate-500 mt-5 italic">Tidak ada data untuk filter ini</p>) : availableDaysInMonth.map((dayData, idx) => (
-                                                                    <div key={idx} onClick={() => handleDayClick(dayData.dateStr)} className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 hover:border-orange-400/30 transition-all cursor-pointer group flex justify-between items-center">
-                                                                        <div className="flex items-center gap-4">
-                                                                            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20"><i className="fas fa-calendar-day"></i></div>
-                                                                            <div><div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Tanggal</div><div className="text-sm font-bold text-white uppercase">{dayData.dateStr}</div></div>
+                                                                {availableDaysInMonth.length === 0 ? (<p className="text-center text-[9px] sm:text-[10px] text-slate-500 mt-5 italic">Tidak ada data untuk filter ini</p>) : availableDaysInMonth.map((dayData, idx) => (
+                                                                    <div key={idx} onClick={() => handleDayClick(dayData.dateStr)} className="p-3 sm:p-4 bg-white/5 rounded-xl sm:rounded-2xl border border-white/5 hover:bg-white/10 hover:border-orange-400/30 transition-all cursor-pointer group flex justify-between items-center">
+                                                                        <div className="flex items-center gap-3 sm:gap-4">
+                                                                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20 shrink-0"><i className="fas fa-calendar-day text-xs sm:text-base"></i></div>
+                                                                            <div><div className="text-[8px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5 sm:mb-1">Tanggal</div><div className="text-xs sm:text-sm font-bold text-white uppercase">{dayData.dateStr}</div></div>
                                                                         </div>
-                                                                        <div className="flex items-center gap-3">
-                                                                            <div className="flex items-center gap-1">
-                                                                                <span className="text-[9px] bg-white/10 px-2 py-1 rounded text-slate-300 font-bold">{dayData.logCount} Item</span>
-                                                                                <span className="text-[9px] bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded text-emerald-400 font-bold">{Math.floor(dayData.logCount / 2)} Set</span>
+                                                                        <div className="flex items-center gap-2 sm:gap-3">
+                                                                            <div className="flex flex-col items-end gap-1">
+                                                                                <span className="text-[7px] sm:text-[9px] bg-white/10 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded text-slate-300 font-bold">{dayData.logCount} Item</span>
                                                                             </div>
-                                                                            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-black transition-all"><i className="fas fa-chevron-right text-xs"></i></div>
+                                                                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-black transition-all"><i className="fas fa-chevron-right text-[10px] sm:text-xs"></i></div>
                                                                         </div>
                                                                     </div>
                                                                 ))}
@@ -2138,10 +2142,10 @@
                                                         )}
 
                                                         {logViewMode === 'entries' && (
-                                                            <div className="animate-in space-y-3">
-                                                                <div className="flex items-center gap-3 mb-4 cursor-pointer hover:text-white transition-colors group" onClick={handleBackToDays}>
-                                                                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10"><i className="fas fa-arrow-left text-xs"></i></div>
-                                                                    <div><p className="text-[8px] font-black text-slate-500 uppercase tracking-widest group-hover:text-white">Kembali ke Tanggal</p><p className="text-xs font-bold text-white uppercase">{selectedLogDate}</p></div>
+                                                            <div className="animate-in space-y-2 sm:space-y-3">
+                                                                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 cursor-pointer hover:text-white transition-colors group" onClick={handleBackToDays}>
+                                                                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10"><i className="fas fa-arrow-left text-[10px] sm:text-xs"></i></div>
+                                                                    <div><p className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest group-hover:text-white">Kembali ke Tanggal</p><p className="text-[10px] sm:text-xs font-bold text-white uppercase">{selectedLogDate}</p></div>
                                                                 </div>
                                                                 {dateSpecificLogs.map((p, idx) => {
                                                                     let locStr = (p.loc || ""); 
@@ -2170,34 +2174,44 @@
                                                                     }
 
                                                                     const workDuration = isPulang ? getWorkingDuration(p, dateSpecificLogs) : null;
-                                                                    
                                                                     const { address, badges } = formatLocationData(locStr);
 
                                                                     return (
-                                                                        <div key={idx} onClick={() => setSelectedLog(p)} className="flex gap-4 p-3 bg-white/5 rounded-xl items-center border border-white/5 group hover:border-orange-400/30 transition-all cursor-pointer active:scale-95">
-                                                                            <div className="w-12 h-12 rounded-lg overflow-hidden border border-white/10 shrink-0 relative bg-black shadow-lg">
-                                                                                {p.photo ? <img src={p.photo} className="w-full h-full object-cover" alt="Bukti" /> : <div className="text-[8px] text-center mt-4">N/A</div>}
-                                                                                <div className={`absolute bottom-0 w-full text-[7px] font-black text-center uppercase tracking-tighter ${durC}`}>{durT}</div>
+                                                                        <div key={idx} onClick={() => setSelectedLog(p)} className="flex gap-3 sm:gap-4 p-2.5 sm:p-3 bg-white/5 rounded-xl items-center border border-white/5 group hover:border-orange-400/30 transition-all cursor-pointer active:scale-95">
+                                                                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden border border-white/10 shrink-0 relative bg-black shadow-lg">
+                                                                                {p.photo ? <img src={p.photo} className="w-full h-full object-cover" alt="Bukti" /> : <div className="text-[7px] sm:text-[8px] text-center mt-3 sm:mt-4">N/A</div>}
+                                                                                <div className={`absolute bottom-0 w-full text-[6px] sm:text-[7px] font-black text-center uppercase tracking-tighter ${durC}`}>{durT}</div>
                                                                             </div>
                                                                             <div className="flex-1 min-w-0">
-                                                                                <div className="flex justify-between items-center mb-1"><div className="flex items-center"><span className={`text-[8px] font-black uppercase tracking-widest ${statusColor}`}>{isPulang ? 'PULANG' : (isIzin ? 'IZIN' : (isKhusus ? 'KHUSUS' : (isEkstra ? 'TAMBAHAN' : 'HADIR')))}</span>{halfTimeStr && (<span className="ml-2 px-1.5 py-0.5 rounded bg-amber-500/20 border border-amber-500/30 text-[8px] text-amber-300 font-mono font-bold"><i className="fas fa-hourglass-half mr-1"></i>{halfTimeStr}</span>)}</div><span className="text-white text-[10px] font-bold font-mono opacity-80">{p.time}</span></div>
-                                                                                <div className="text-[10px] text-slate-300 font-bold uppercase truncate opacity-70 tracking-wide mb-1">{p.date}</div>
+                                                                                <div className="flex justify-between items-center mb-0.5 sm:mb-1">
+                                                                                    <div className="flex items-center flex-wrap gap-1">
+                                                                                        <span className={`text-[7px] sm:text-[8px] font-black uppercase tracking-widest ${statusColor}`}>{isPulang ? 'PULANG' : (isIzin ? 'IZIN' : (isKhusus ? 'KHUSUS' : (isEkstra ? 'TAMBAHAN' : 'HADIR')))}</span>
+                                                                                        {halfTimeStr && (<span className="px-1 py-0.5 rounded bg-amber-500/20 border border-amber-500/30 text-[6px] sm:text-[7px] text-amber-300 font-mono font-bold whitespace-nowrap"><i className="fas fa-hourglass-half mr-1"></i>{halfTimeStr}</span>)}
+                                                                                    </div>
+                                                                                    <span className="text-white text-[9px] sm:text-[10px] font-bold font-mono opacity-80 shrink-0 ml-1">{p.time}</span>
+                                                                                </div>
+                                                                                <div className="text-[8px] sm:text-[10px] text-slate-300 font-bold uppercase truncate opacity-70 tracking-wide mb-0.5 sm:mb-1">{p.date}</div>
                                                                                 
-                                                                                <div className="flex items-center justify-between"><div className="text-[9px] text-slate-400 font-medium truncate flex items-center gap-1.5 opacity-60 flex-1">
-                                                                                    <i className="fas fa-map-marker-alt text-orange-500"></i> 
-                                                                                    {isEkstra && extraDesc && <span className="text-orange-400 font-bold mr-1">[{extraDesc}]</span>}
-                                                                                    {address}
-                                                                                </div><button onClick={(e) => { e.stopPropagation(); openMap(p.loc); }} className="ml-2 w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all shadow-lg"><i className="fas fa-location-arrow text-[8px]"></i></button></div>
+                                                                                <div className="flex items-center justify-between mt-1">
+                                                                                    <div className="text-[7px] sm:text-[9px] text-slate-400 font-medium truncate flex items-center gap-1 sm:gap-1.5 opacity-60 flex-1 min-w-0">
+                                                                                        <i className="fas fa-map-marker-alt text-orange-500 shrink-0"></i> 
+                                                                                        <span className="truncate">
+                                                                                            {isEkstra && extraDesc && <span className="text-orange-400 font-bold mr-1">[{extraDesc}]</span>}
+                                                                                            {address}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <button onClick={(e) => { e.stopPropagation(); openMap(p.loc); }} className="ml-1.5 sm:ml-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all shadow-lg shrink-0"><i className="fas fa-location-arrow text-[7px] sm:text-[8px]"></i></button>
+                                                                                </div>
                                                                                 
                                                                                 {badges.length > 0 && (
-                                                                                    <div className="flex flex-wrap gap-2 mt-1">
+                                                                                    <div className="flex flex-wrap gap-1 sm:gap-2 mt-1">
                                                                                         {badges}
                                                                                     </div>
                                                                                 )}
 
                                                                                 {workDuration && (
-                                                                                    <div className="mt-2 text-[9px] text-orange-400 font-bold bg-orange-500/10 border border-orange-500/20 px-2 py-1 rounded inline-block">
-                                                                                        <i className="fas fa-stopwatch mr-1"></i> Total Jam Kerja: {workDuration}
+                                                                                    <div className="mt-1 sm:mt-2 text-[7px] sm:text-[9px] text-orange-400 font-bold bg-orange-500/10 border border-orange-500/20 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded inline-block">
+                                                                                        <i className="fas fa-stopwatch mr-1"></i> Jam Kerja: {workDuration}
                                                                                     </div>
                                                                                 )}
                                                                             </div>
@@ -2214,59 +2228,59 @@
                                 </div>
                             ) : (
                                 /* --- AGENDA VIEW --- */
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 animate-in">
                                     <div className="md:col-span-1">
-                                        <div className="os-window p-6 rounded-[2rem] border border-white/5 sticky top-6">
-                                                <div className="flex justify-between items-center mb-6">
-                                                    <h3 className="text-white font-black uppercase tracking-[0.2em] text-sm">
+                                        <div className="os-window p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-white/5 md:sticky md:top-6">
+                                                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                                                    <h3 className="text-white font-black uppercase tracking-[0.1em] sm:tracking-[0.2em] text-[10px] sm:text-sm">
                                                         {agendaViewMode === 'personal' ? 'Agenda Saya' : 'Agenda Bersama'}
                                                     </h3>
-                                                    <div className="flex gap-2">
-                                                        <button onClick={() => setAgendaViewMode(prev => prev === 'personal' ? 'shared' : 'personal')} className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all shadow-lg text-[10px]" title={agendaViewMode === 'personal' ? "Lihat Agenda Bersama" : "Lihat Agenda Saya"}>
+                                                    <div className="flex gap-1.5 sm:gap-2">
+                                                        <button onClick={() => setAgendaViewMode(prev => prev === 'personal' ? 'shared' : 'personal')} className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all shadow-lg text-[8px] sm:text-[10px]" title={agendaViewMode === 'personal' ? "Lihat Agenda Bersama" : "Lihat Agenda Saya"}>
                                                             <i className={`fas fa-${agendaViewMode === 'personal' ? 'users' : 'user'}`}></i>
                                                         </button>
-                                                        <button onClick={() => setAgendaSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')} className="w-8 h-8 rounded-lg bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all shadow-lg text-[10px]" title={agendaSortOrder === 'desc' ? "Terbaru" : "Terlama"}>
+                                                        <button onClick={() => setAgendaSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')} className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all shadow-lg text-[8px] sm:text-[10px]" title={agendaSortOrder === 'desc' ? "Terbaru" : "Terlama"}>
                                                             <i className={`fas fa-sort-amount-${agendaSortOrder === 'desc' ? 'down' : 'up'}`}></i>
                                                         </button>
-                                                        <button onClick={() => { setShowAgendaForm(!showAgendaForm); setNewAgenda({title:'',desc:'',date:'', visibility:'Private'}); }} className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center hover:bg-blue-500 transition-all shadow-lg">
+                                                        <button onClick={() => { setShowAgendaForm(!showAgendaForm); setNewAgenda({title:'',desc:'',date:'', visibility:'Private'}); }} className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-blue-600 text-white flex items-center justify-center hover:bg-blue-500 transition-all shadow-lg text-[8px] sm:text-[10px]">
                                                             <i className={`fas fa-${showAgendaForm ? 'minus' : 'plus'}`}></i>
                                                         </button>
                                                     </div>
                                                 </div>
                                                 
-                                                <div className="flex justify-between items-center mb-4 px-1">
-                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4 px-1">
+                                                    <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center sm:text-left">
                                                         {showArchived ? 'Arsip (Selesai)' : 'Daftar Aktif (Belum Selesai)'}
                                                     </p>
-                                                    <button onClick={() => setShowArchived(!showArchived)} className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border ${showArchived ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'}`}>
+                                                    <button onClick={() => setShowArchived(!showArchived)} className={`px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg text-[8px] sm:text-[9px] font-black uppercase tracking-wider transition-all border w-full sm:w-auto ${showArchived ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'}`}>
                                                         <i className={`fas fa-${showArchived ? 'box-open' : 'archive'} mr-1.5`}></i>
-                                                        {showArchived ? 'Kembali ke Aktif' : 'Lihat Arsip'}
+                                                        {showArchived ? 'Aktif' : 'Arsip'}
                                                     </button>
                                                 </div>
 
                                                 {showAgendaForm && (
-                                                    <form onSubmit={handleAddAgenda} className="space-y-3 mb-6 animate-in bg-white/5 p-4 rounded-2xl border border-white/10">
-                                                        <input placeholder="Judul Agenda" className="w-full p-3 os-input rounded-xl text-xs" value={newAgenda.title} onChange={e => setNewAgenda({...newAgenda, title: e.target.value})} required />
-                                                        <textarea placeholder="Catatan..." className="w-full p-3 os-input rounded-xl text-xs" rows="3" value={newAgenda.desc} onChange={e => setNewAgenda({...newAgenda, desc: e.target.value})}></textarea>
-                                                        <input type="date" className="w-full p-3 os-input rounded-xl text-xs" value={newAgenda.date} onChange={e => setNewAgenda({...newAgenda, date: e.target.value})} required />
+                                                    <form onSubmit={handleAddAgenda} className="space-y-2.5 sm:space-y-3 mb-6 animate-in bg-white/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/10">
+                                                        <input placeholder="Judul Agenda" className="w-full p-2.5 sm:p-3 os-input rounded-lg sm:rounded-xl text-[10px] sm:text-xs" value={newAgenda.title} onChange={e => setNewAgenda({...newAgenda, title: e.target.value})} required />
+                                                        <textarea placeholder="Catatan..." className="w-full p-2.5 sm:p-3 os-input rounded-lg sm:rounded-xl text-[10px] sm:text-xs" rows="3" value={newAgenda.desc} onChange={e => setNewAgenda({...newAgenda, desc: e.target.value})}></textarea>
+                                                        <input type="date" className="w-full p-2.5 sm:p-3 os-input rounded-lg sm:rounded-xl text-[10px] sm:text-xs" value={newAgenda.date} onChange={e => setNewAgenda({...newAgenda, date: e.target.value})} required />
                                                         
                                                         {!newAgenda.id && newAgenda.visibility === 'Private' && (
-                                                            <div className="space-y-2 bg-black/20 p-3 rounded-xl border border-white/5">
-                                                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tugaskan Kepada:</p>
-                                                                <div className="max-h-32 overflow-y-auto custom-scrollbar grid grid-cols-1 gap-2">
-                                                                    <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer border border-transparent hover:border-white/10 transition-all">
-                                                                        <input type="checkbox" className="w-4 h-4 rounded border-slate-500 accent-orange-500 cursor-pointer"
+                                                            <div className="space-y-1.5 sm:space-y-2 bg-black/20 p-2.5 sm:p-3 rounded-lg sm:rounded-xl border border-white/5">
+                                                                <p className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1 sm:mb-2">Tugaskan Kepada:</p>
+                                                                <div className="max-h-24 sm:max-h-32 overflow-y-auto custom-scrollbar grid grid-cols-1 gap-1.5 sm:gap-2">
+                                                                    <label className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-md sm:rounded-lg hover:bg-white/5 cursor-pointer border border-transparent hover:border-white/10 transition-all">
+                                                                        <input type="checkbox" className="w-3 h-3 sm:w-4 sm:h-4 rounded border-slate-500 accent-orange-500 cursor-pointer"
                                                                             checked={assignTo.length === 0 || assignTo.includes(currentUser.username)}
                                                                             onChange={(e) => {
                                                                                 if(e.target.checked) setAssignTo(prev => [...prev, currentUser.username]);
                                                                                 else setAssignTo(prev => prev.filter(u => u !== currentUser.username));
                                                                             }}
                                                                         />
-                                                                        <span className="text-xs text-white font-bold">Saya Sendiri</span>
+                                                                        <span className="text-[10px] sm:text-xs text-white font-bold">Saya Sendiri</span>
                                                                     </label>
                                                                     {allUsersList.filter(u => u.username !== currentUser.username).map(u => (
-                                                                        <label key={u.username} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer border border-transparent hover:border-white/10 transition-all">
-                                                                            <input type="checkbox" className="w-4 h-4 rounded border-slate-500 accent-orange-500 cursor-pointer"
+                                                                        <label key={u.username} className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-md sm:rounded-lg hover:bg-white/5 cursor-pointer border border-transparent hover:border-white/10 transition-all">
+                                                                            <input type="checkbox" className="w-3 h-3 sm:w-4 sm:h-4 rounded border-slate-500 accent-orange-500 cursor-pointer"
                                                                                 checked={assignTo.includes(u.username)}
                                                                                 onChange={(e) => {
                                                                                     if(e.target.checked) setAssignTo(prev => [...prev, u.username]);
@@ -2274,8 +2288,8 @@
                                                                                 }}
                                                                             />
                                                                             <div className="flex flex-col">
-                                                                                <span className="text-xs text-white">{u.fullName}</span>
-                                                                                <span className="text-[8px] text-slate-500 uppercase">{u.position}</span>
+                                                                                <span className="text-[10px] sm:text-xs text-white">{u.fullName}</span>
+                                                                                <span className="text-[7px] sm:text-[8px] text-slate-500 uppercase">{u.position}</span>
                                                                             </div>
                                                                         </label>
                                                                     ))}
@@ -2283,90 +2297,81 @@
                                                             </div>
                                                         )}
 
-                                                        <div className="flex gap-2 bg-black/30 p-1 rounded-lg">
-                                                            <button type="button" onClick={() => setNewAgenda({...newAgenda, visibility: 'Private'})} className={`flex-1 py-2 text-[9px] font-bold rounded-md uppercase tracking-wider transition-all ${newAgenda.visibility === 'Private' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'}`}>Pribadi</button>
-                                                            <button type="button" onClick={() => setNewAgenda({...newAgenda, visibility: 'Public'})} className={`flex-1 py-2 text-[9px] font-bold rounded-md uppercase tracking-wider transition-all ${newAgenda.visibility === 'Public' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}>Publik</button>
+                                                        <div className="flex gap-1.5 sm:gap-2 bg-black/30 p-1 rounded-lg">
+                                                            <button type="button" onClick={() => setNewAgenda({...newAgenda, visibility: 'Private'})} className={`flex-1 py-1.5 sm:py-2 text-[8px] sm:text-[9px] font-bold rounded-md uppercase tracking-wider transition-all ${newAgenda.visibility === 'Private' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'}`}>Pribadi</button>
+                                                            <button type="button" onClick={() => setNewAgenda({...newAgenda, visibility: 'Public'})} className={`flex-1 py-1.5 sm:py-2 text-[8px] sm:text-[9px] font-bold rounded-md uppercase tracking-wider transition-all ${newAgenda.visibility === 'Public' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}>Publik</button>
                                                         </div>
-                                                        <button className="w-full btn-orange py-3 rounded-xl text-xs font-black uppercase tracking-widest">{newAgenda.id ? 'Perbarui Agenda' : 'Simpan / Tugaskan'}</button>
+                                                        <button className="w-full btn-orange py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest mt-1">
+                                                            {newAgenda.id ? 'Perbarui' : 'Simpan'}
+                                                        </button>
                                                         {newAgenda.id && (
-                                                            <button type="button" onClick={() => { setNewAgenda({title:'',desc:'',date:'', visibility:'Private'}); setShowAgendaForm(false); }} className="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-xl text-xs font-black uppercase tracking-widest mt-2">Batal Edit</button>
+                                                            <button type="button" onClick={() => { setNewAgenda({title:'',desc:'',date:'', visibility:'Private'}); setShowAgendaForm(false); }} className="w-full bg-white/10 hover:bg-white/20 text-white py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest mt-1.5 sm:mt-2">Batal Edit</button>
                                                         )}
                                                     </form>
                                                 )}
 
-                                                <div className="space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-1">
+                                                <div className="space-y-3 sm:space-y-4 max-h-[400px] sm:max-h-[500px] overflow-y-auto custom-scrollbar pr-1">
                                                     {displayedAgendas.length === 0 ? (
-                                                        <div className="text-center py-10 opacity-50">
-                                                            <i className="fas fa-clipboard-list text-4xl mb-3 text-slate-500"></i>
-                                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                                                        <div className="text-center py-8 sm:py-10 opacity-50">
+                                                            <i className="fas fa-clipboard-list text-3xl sm:text-4xl mb-2 sm:mb-3 text-slate-500"></i>
+                                                            <p className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest px-4">
                                                                 {filterDate ? `Tidak ada agenda pada ${filterDate}` : 'Belum ada agenda'}
                                                             </p>
                                                         </div>
                                                     ) : displayedAgendas.map(agenda => {
                                                         const isMine = agenda.username === currentUser.username;
-                                                        
                                                         const descStr = agenda.desc || "";
                                                         const isAdminTag = descStr.includes("::ADMIN::");
                                                         const cleanDesc = descStr.replace("::ADMIN::", "").trim();
-                                                        
                                                         let themeColor, hoverClass, barColor, badgeContent, badgeClass;
 
                                                         if (isAdminTag) {
-                                                            themeColor = 'border-purple-500 shadow-purple-500/20 bg-purple-500';
-                                                            hoverClass = 'hover:border-purple-500 active:border-purple-500 hover:shadow-purple-500/20';
+                                                            hoverClass = 'hover:border-purple-500 hover:shadow-purple-500/20';
                                                             barColor = 'bg-purple-500';
-                                                            badgeContent = 'DARI ADMIN';
+                                                            badgeContent = 'ADMIN';
                                                             badgeClass = 'bg-purple-500/20 text-purple-300 border-purple-500/30';
                                                         } else if (isMine) {
-                                                            themeColor = 'border-orange-500 shadow-orange-500/20 bg-orange-500';
-                                                            hoverClass = 'hover:border-orange-500 active:border-orange-500 hover:shadow-orange-500/20';
+                                                            hoverClass = 'hover:border-orange-500 hover:shadow-orange-500/20';
                                                             barColor = 'bg-orange-500';
                                                             badgeContent = 'PRIBADI';
                                                             badgeClass = 'bg-orange-500/10 text-orange-500 border-orange-500/30';
                                                         } else {
-                                                            themeColor = 'border-[#10B981] shadow-[#10B981]/20 bg-[#10B981]';
-                                                            hoverClass = 'hover:border-[#10B981] active:border-[#10B981] hover:shadow-[#10B981]/20';
-                                                            barColor = 'bg-[#10B981]';
-                                                            badgeContent = agenda.fullName || agenda.username;
+                                                            hoverClass = 'hover:border-emerald-500 hover:shadow-emerald-500/20';
+                                                            barColor = 'bg-emerald-500';
+                                                            badgeContent = (agenda.fullName || agenda.username).substring(0, 10) + '..';
                                                             badgeClass = 'bg-blue-500/20 text-blue-300 border-blue-500/30';
                                                         }
 
                                                         return (
-                                                            <div key={agenda.id} className={`p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden group ${agenda.isDone ? 'bg-black/20 border-white/5 opacity-60' : `bg-white/5 border-white/10 ${hoverClass} hover:shadow-lg active:scale-[0.98]`}`} onClick={() => handleAgendaClick(agenda.date)}>
-                                                                <div className={`absolute left-0 top-0 bottom-0 w-1 ${barColor} opacity-0 group-hover:opacity-100 transition-opacity`}></div>
-                                                                <div className="flex gap-3 items-start">
+                                                            <div key={agenda.id} className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer relative overflow-hidden group ${agenda.isDone ? 'bg-black/20 border-white/5 opacity-60' : `bg-white/5 border-white/10 ${hoverClass} active:scale-[0.98]`}`} onClick={() => handleAgendaClick(agenda.date)}>
+                                                                <div className={`absolute left-0 top-0 bottom-0 w-1 ${barColor} opacity-50 group-hover:opacity-100 transition-opacity`}></div>
+                                                                <div className="flex gap-2 sm:gap-3 items-start pl-1 sm:pl-0">
                                                                     {(agendaViewMode === 'personal' || agenda.username === currentUser.username) && (
-                                                                        <label className="custom-checkbox relative flex items-center p-3 rounded-full cursor-pointer" onClick={e => e.stopPropagation()}>
-                                                                            <input type="checkbox" className="peer relative appearance-none w-5 h-5 border-2 border-slate-500 rounded-md checked:bg-emerald-500 checked:border-emerald-500 transition-all cursor-pointer" checked={agenda.isDone} onChange={() => toggleAgenda(agenda.id)} />
-                                                                            <i className="fas fa-check absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></i>
+                                                                        <label className="custom-checkbox relative flex items-center p-1.5 sm:p-3 rounded-full cursor-pointer" onClick={e => e.stopPropagation()}>
+                                                                            <input type="checkbox" className="peer relative appearance-none w-4 h-4 sm:w-5 sm:h-5 border-2 border-slate-500 rounded-md checked:bg-emerald-500 checked:border-emerald-500 transition-all cursor-pointer" checked={agenda.isDone} onChange={() => toggleAgenda(agenda.id)} />
+                                                                            <i className="fas fa-check absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-[8px] sm:text-xs opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></i>
                                                                         </label>
                                                                     )}
-                                                                    <div className="flex-1">
-                                                                        <div className="flex justify-between items-start">
-                                                                            <h4 className={`font-bold text-sm ${agenda.isDone ? 'text-slate-500 line-through' : 'text-white'}`}>{agenda.title}</h4>
-                                                                            <div className="flex items-center gap-2">
-                                                                                <span className={`text-[8px] px-2 py-0.5 rounded uppercase font-bold tracking-wider border ${badgeClass}`}>
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <div className="flex justify-between items-start gap-2">
+                                                                            <h4 className={`font-bold text-xs sm:text-sm truncate ${agenda.isDone ? 'text-slate-500 line-through' : 'text-white'}`}>{agenda.title}</h4>
+                                                                            <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+                                                                                <span className={`text-[6px] sm:text-[8px] px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded uppercase font-bold tracking-wider border ${badgeClass}`}>
                                                                                     {badgeContent}
                                                                                 </span>
                                                                                 {(agendaViewMode === 'personal' || agenda.username === currentUser.username) && (
-                                                                                    <div className="flex gap-1">
-                                                                                        <button onClick={(e) => { e.stopPropagation(); handleEditAgenda(agenda); }} className="text-slate-400 hover:text-orange-400 transition-colors p-1" title="Edit Agenda"><i className="fas fa-pen text-xs"></i></button>
-                                                                                        <button onClick={(e) => { e.stopPropagation(); handleDeleteAgenda(agenda); }} className="text-slate-400 hover:text-rose-500 transition-colors p-1" title="Hapus Agenda"><i className="fas fa-trash text-xs"></i></button>
+                                                                                    <div className="flex gap-0.5 sm:gap-1">
+                                                                                        <button onClick={(e) => { e.stopPropagation(); handleEditAgenda(agenda); }} className="text-slate-400 hover:text-orange-400 transition-colors p-1" title="Edit Agenda"><i className="fas fa-pen text-[9px] sm:text-xs"></i></button>
+                                                                                        <button onClick={(e) => { e.stopPropagation(); handleDeleteAgenda(agenda); }} className="text-slate-400 hover:text-rose-500 transition-colors p-1" title="Hapus Agenda"><i className="fas fa-trash text-[9px] sm:text-xs"></i></button>
                                                                                     </div>
-                                                                                )}
-
-                                                                                {agenda.createdBy && agenda.createdBy !== currentUser.fullName && (
-                                                                                    <span className="ml-2 text-[7px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1.5 py-0.5 rounded uppercase font-bold">
-                                                                                        Oleh: {agenda.createdBy.split(' ')[0]}
-                                                                                    </span>
                                                                                 )}
                                                                             </div>
                                                                         </div>
-                                                                        <p className="text-[10px] text-slate-400 mt-1">{cleanDesc}</p>
-                                                                        <div className="mt-3 flex items-center gap-2">
-                                                                            <span className={`text-[9px] px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${agenda.isDone ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>{agenda.isDone ? 'Selesai' : 'Belum Selesai'}</span>
-                                                                            <span className="text-[9px] text-slate-500 font-mono"><i className="far fa-calendar mr-1"></i>{agenda.date}</span>
-                                                                            <span className={`text-[8px] px-2 py-0.5 rounded-md uppercase font-bold tracking-widest border ${agenda.visibility === 'Public' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' : 'bg-red-500/10 text-red-400 border-red-500/30'}`}>{agenda.visibility === 'Public' ? 'Publik' : 'Pribadi'}</span>
+                                                                        <p className="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 sm:mt-1 line-clamp-2 leading-snug">{cleanDesc}</p>
+                                                                        <div className="mt-2 sm:mt-3 flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                                                                            <span className={`text-[7px] sm:text-[9px] px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-md font-bold uppercase tracking-wider ${agenda.isDone ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>{agenda.isDone ? 'Selesai' : 'Belum Selesai'}</span>
+                                                                            <span className="text-[7px] sm:text-[9px] text-slate-500 font-mono"><i className="far fa-calendar mr-1"></i>{agenda.date}</span>
+                                                                            <span className={`text-[7px] sm:text-[8px] px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-md uppercase font-bold tracking-widest border ${agenda.visibility === 'Public' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' : 'bg-red-500/10 text-red-400 border-red-500/30'}`}>{agenda.visibility === 'Public' ? 'Publik' : 'Pribadi'}</span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -2377,16 +2382,29 @@
                                         </div>
                                     </div>
                                     <div className="md:col-span-2">
-                                        <div className="os-window p-6 rounded-[2rem] border border-white/5 h-full">
-                                                <div className="flex justify-between items-center mb-6"><button onClick={() => changeMonth(-1)} className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 transition-colors"><i className="fas fa-chevron-left"></i></button><div className="text-center"><span className="text-white font-black uppercase tracking-widest text-sm block">{currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</span><span className="text-[8px] text-slate-500 font-bold uppercase tracking-[0.2em]">{agendaViewMode === 'personal' ? 'Kalender Pribadi' : 'Kalender Bersama'}</span></div><button onClick={() => changeMonth(1)} className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 transition-colors"><i className="fas fa-chevron-right"></i></button></div>
-                                                <div className="grid grid-cols-7 gap-2 text-center mb-2">{['Min','Sen','Sel','Rab','Kam','Jum','Sab'].map(d => (<div key={d} className="text-[10px] font-bold text-slate-500 uppercase">{d}</div>))}</div>
-                                                <div className="grid grid-cols-7 gap-2">{renderCalendar()}</div>
-                                                {filterDate && (<div className="mt-6 flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5 animate-in"><span className="text-xs text-slate-300">Menampilkan agenda tanggal: <b className="text-white">{filterDate}</b></span><button onClick={() => setFilterDate(null)} className="text-[10px] text-orange-400 hover:underline font-bold uppercase tracking-wide">Reset Filter</button></div>)}
+                                        <div className="os-window p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] border border-white/5 h-full">
+                                                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                                                    <button onClick={() => changeMonth(-1)} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 transition-colors"><i className="fas fa-chevron-left text-[10px] sm:text-base"></i></button>
+                                                    <div className="text-center">
+                                                        <span className="text-white font-black uppercase tracking-widest text-[10px] sm:text-sm block">{currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+                                                        <span className="text-[7px] sm:text-[8px] text-slate-500 font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em]">{agendaViewMode === 'personal' ? 'Kalender Pribadi' : 'Kalender Bersama'}</span>
+                                                    </div>
+                                                    <button onClick={() => changeMonth(1)} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300 transition-colors"><i className="fas fa-chevron-right text-[10px] sm:text-base"></i></button>
+                                                </div>
+                                                <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center mb-1.5 sm:mb-2">{['Min','Sen','Sel','Rab','Kam','Jum','Sab'].map(d => (<div key={d} className="text-[8px] sm:text-[10px] font-bold text-slate-500 uppercase">{d}</div>))}</div>
+                                                <div className="grid grid-cols-7 gap-1 sm:gap-2">{renderCalendar()}</div>
+                                                
+                                                {filterDate && (
+                                                    <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-between items-center bg-white/5 p-3 sm:p-4 rounded-lg sm:rounded-xl border border-white/5 animate-in gap-2 sm:gap-0 text-center sm:text-left">
+                                                        <span className="text-[10px] sm:text-xs text-slate-300">Menampilkan agenda:<br className="block sm:hidden"/><b className="text-white ml-0 sm:ml-1">{filterDate}</b></span>
+                                                        <button onClick={() => setFilterDate(null)} className="text-[9px] sm:text-[10px] text-orange-400 hover:underline font-bold uppercase tracking-wide bg-orange-500/10 sm:bg-transparent px-3 py-1.5 sm:p-0 rounded sm:rounded-none">Reset Filter</button>
+                                                    </div>
+                                                )}
                                                 
                                                 {agendaViewMode === 'shared' && (
-                                                    <div className="mt-4 flex gap-4 justify-center">
-                                                        <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-orange-500"></div><span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Punya Saya</span></div>
-                                                        <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500"></div><span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Orang Lain</span></div>
+                                                    <div className="mt-3 sm:mt-4 flex gap-3 sm:gap-4 justify-center">
+                                                        <div className="flex items-center gap-1.5 sm:gap-2"><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-orange-500"></div><span className="text-[7px] sm:text-[9px] text-slate-400 uppercase font-bold tracking-wider">Punya Saya</span></div>
+                                                        <div className="flex items-center gap-1.5 sm:gap-2"><div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></div><span className="text-[7px] sm:text-[9px] text-slate-400 uppercase font-bold tracking-wider">Orang Lain</span></div>
                                                     </div>
                                                 )}
                                         </div>
@@ -2397,16 +2415,18 @@
                     )}
 
                     {isProfileModalOpen && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 modal-overlay animate-in" onClick={() => setIsProfileModalOpen(false)}>
-                            <div className="os-window w-full max-w-sm p-8 rounded-[3rem] text-center relative border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar" onClick={e => e.stopPropagation()}>
-                                <button onClick={() => setIsProfileModalOpen(false)} className="absolute top-6 right-6 text-slate-400 hover:text-white text-xl transition-colors"><i className="fas fa-times"></i></button>
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 modal-overlay animate-in" onClick={() => setIsProfileModalOpen(false)}>
+                            <div className="os-window w-full max-w-sm p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] text-center relative border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar" onClick={e => e.stopPropagation()}>
+                                <button onClick={() => setIsProfileModalOpen(false)} className="absolute top-4 right-4 sm:top-6 sm:right-6 text-slate-400 hover:text-white text-lg sm:text-xl transition-colors bg-white/5 sm:bg-transparent w-8 h-8 rounded-full sm:rounded-none"><i className="fas fa-times"></i></button>
                                 
-                                <div className="flex flex-col items-center">
-                                    <div className="w-32 h-32 rounded-[2rem] border-4 border-orange-400 overflow-hidden shadow-2xl mb-6 cursor-pointer transform hover:scale-105 transition-transform relative group">
+                                <div className="flex flex-col items-center mt-2 sm:mt-0">
+                                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl sm:rounded-[2rem] border-2 sm:border-4 border-orange-400 overflow-hidden shadow-2xl mb-4 sm:mb-6 cursor-pointer transform hover:scale-105 transition-transform relative group bg-black">
                                             <img src={isEditingProfile ? editForm.profilePic : currentUser.profilePic} className="w-full h-full object-cover" alt="Profile" onClick={() => !isEditingProfile && setIsPhotoZoomOpen(true)} />
                                             {isEditingProfile && (
-                                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                                                    <label className="cursor-pointer text-white text-xs font-bold uppercase"><i className="fas fa-camera text-2xl mb-1 block"></i>Ganti</label>
+                                                <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
+                                                    <label className="cursor-pointer text-white text-[10px] sm:text-xs font-bold uppercase flex flex-col items-center">
+                                                        <i className="fas fa-camera text-xl sm:text-2xl mb-1"></i> Ganti
+                                                    </label>
                                                     <input type="file" accept="image/*" onChange={handleEditPhotoChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                                                 </div>
                                             )}
@@ -2414,128 +2434,124 @@
 
                                     {!isEditingProfile ? (
                                         <>
-                                            <h3 className="text-white font-black text-2xl uppercase tracking-wider">{currentUser.fullName}</h3>
-                                            <p className="text-orange-400 font-bold text-xs uppercase tracking-[0.3em] mb-8">{currentUser.position}</p>
+                                            <h3 className="text-white font-black text-xl sm:text-2xl uppercase tracking-wider px-2">{currentUser.fullName}</h3>
+                                            <p className="text-orange-400 font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.3em] mb-6 sm:mb-8">{currentUser.position}</p>
                                             
-                                            <div className="w-full space-y-4 text-left">
-                                                <div className="bg-white/5 p-4 rounded-2xl border border-white/5 shadow-inner">
+                                            <div className="w-full space-y-3 sm:space-y-4 text-left">
+                                                <div className="bg-white/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 shadow-inner">
                                                     <div className="flex justify-between items-center">
                                                         <div>
-                                                            <p className="text-[10px] font-bold text-white uppercase tracking-wider">Login Biometrik</p>
-                                                            <p className="text-[8px] text-slate-400 mt-0.5">Aktifkan Face ID / Sidik Jari</p>
+                                                            <p className="text-[9px] sm:text-[10px] font-bold text-white uppercase tracking-wider">Login Biometrik</p>
+                                                            <p className="text-[7px] sm:text-[8px] text-slate-400 mt-0.5">Aktifkan Face ID / Sidik Jari</p>
                                                         </div>
-                                                        <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                                                            <input type="checkbox" name="toggle" id="bio-toggle" className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer" checked={biometricEnabled} onChange={handleToggleBiometric}/>
-                                                            <label htmlFor="bio-toggle" className="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer"></label>
+                                                        <div className="relative inline-block w-8 sm:w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                                            <input type="checkbox" name="toggle" id="bio-toggle" className="toggle-checkbox absolute block w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white border-[3px] sm:border-4 appearance-none cursor-pointer" checked={biometricEnabled} onChange={handleToggleBiometric}/>
+                                                            <label htmlFor="bio-toggle" className="toggle-label block overflow-hidden h-4 sm:h-5 rounded-full bg-gray-300 cursor-pointer"></label>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div className="bg-white/5 p-4 rounded-2xl border border-white/5 shadow-inner">
-                                                    <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Nama Panggilan</p>
-                                                    <p className="text-sm font-bold text-white uppercase">{currentUser.nickname}</p>
+                                                <div className="bg-white/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 shadow-inner">
+                                                    <p className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5 sm:mb-1">Nama Panggilan</p>
+                                                    <p className="text-xs sm:text-sm font-bold text-white uppercase">{currentUser.nickname}</p>
                                                 </div>
-                                                <div className="bg-white/5 p-4 rounded-2xl border border-white/5 shadow-inner">
-                                                    <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">NIK</p>
-                                                    <p className="text-sm font-bold text-white font-mono">{currentUser.nik}</p>
+                                                <div className="bg-white/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 shadow-inner">
+                                                    <p className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5 sm:mb-1">NIK</p>
+                                                    <p className="text-xs sm:text-sm font-bold text-white font-mono">{currentUser.nik}</p>
                                                 </div>
-                                                <div className="bg-white/5 p-4 rounded-2xl border border-white/5 shadow-inner">
-                                                    <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Username</p>
-                                                    <p className="text-sm font-bold text-white font-mono">{currentUser.user || currentUser.username || '-'}</p>
-                                                </div>
-                                                <div className="bg-white/5 p-4 rounded-2xl border border-white/5 shadow-inner">
-                                                    <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Password</p>
-                                                    <p className="text-sm font-bold text-white font-mono tracking-widest">••••••</p>
+                                                <div className="bg-white/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5 shadow-inner">
+                                                    <p className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest mb-0.5 sm:mb-1">Username</p>
+                                                    <p className="text-xs sm:text-sm font-bold text-white font-mono">{currentUser.user || currentUser.username || '-'}</p>
                                                 </div>
                                             </div>
                                             
-                                            <button onClick={() => setIsEditingProfile(true)} className="mt-6 w-full btn-orange py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-xl">Edit Profil</button>
+                                            <button onClick={() => setIsEditingProfile(true)} className="mt-6 sm:mt-8 w-full btn-orange py-3 sm:py-3.5 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-xl">Edit Profil</button>
                                         </>
                                     ) : (
-                                        <div className="w-full space-y-3 text-left animate-in">
+                                        <div className="w-full space-y-2 sm:space-y-3 text-left animate-in">
                                             <div>
-                                                <label className="text-[8px] font-black text-slate-500 uppercase tracking-widest ml-2">Nama Lengkap</label>
-                                                <input name="fullName" value={editForm.fullName} onChange={handleEditProfileChange} className="w-full p-3 os-input rounded-xl text-xs" />
+                                                <label className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest ml-1 sm:ml-2">Nama Lengkap</label>
+                                                <input name="fullName" value={editForm.fullName} onChange={handleEditProfileChange} className="w-full p-2.5 sm:p-3 os-input rounded-lg sm:rounded-xl text-[10px] sm:text-xs" />
                                             </div>
                                             <div>
-                                                <label className="text-[8px] font-black text-slate-500 uppercase tracking-widest ml-2">Nama Panggilan</label>
-                                                <input name="nickname" value={editForm.nickname} onChange={handleEditProfileChange} className="w-full p-3 os-input rounded-xl text-xs" />
+                                                <label className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest ml-1 sm:ml-2">Nama Panggilan</label>
+                                                <input name="nickname" value={editForm.nickname} onChange={handleEditProfileChange} className="w-full p-2.5 sm:p-3 os-input rounded-lg sm:rounded-xl text-[10px] sm:text-xs" />
                                             </div>
                                             <div>
-                                                <label className="text-[8px] font-black text-slate-500 uppercase tracking-widest ml-2">Jabatan</label>
-                                                <select name="position" value={editForm.position} onChange={handleEditProfileChange} className="w-full p-3 os-input rounded-xl text-xs outline-none">
+                                                <label className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest ml-1 sm:ml-2">Jabatan</label>
+                                                <select name="position" value={editForm.position} onChange={handleEditProfileChange} className="w-full p-2.5 sm:p-3 os-input rounded-lg sm:rounded-xl text-[10px] sm:text-xs outline-none">
                                                     {jabatanOptions.map(j => <option key={j} value={j} className="text-black">{j}</option>)}
                                                 </select>
                                             </div>
                                             <div>
-                                                <label className="text-[8px] font-black text-slate-500 uppercase tracking-widest ml-2">NIK</label>
-                                                <input name="nik" value={editForm.nik} onChange={handleEditProfileChange} className="w-full p-3 os-input rounded-xl text-xs" />
+                                                <label className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest ml-1 sm:ml-2">NIK</label>
+                                                <input name="nik" value={editForm.nik} onChange={handleEditProfileChange} className="w-full p-2.5 sm:p-3 os-input rounded-lg sm:rounded-xl text-[10px] sm:text-xs" />
                                             </div>
                                             <div>
-                                                <label className="text-[8px] font-black text-slate-500 uppercase tracking-widest ml-2">Username</label>
-                                                <input name="username" value={editForm.username} onChange={handleEditProfileChange} className="w-full p-3 os-input rounded-xl text-xs" />
+                                                <label className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest ml-1 sm:ml-2">Username</label>
+                                                <input name="username" value={editForm.username} onChange={handleEditProfileChange} className="w-full p-2.5 sm:p-3 os-input rounded-lg sm:rounded-xl text-[10px] sm:text-xs" />
                                             </div>
                                             <div>
-                                                <label className="text-[8px] font-black text-slate-500 uppercase tracking-widest ml-2">Password</label>
-                                                <input name="password" type="text" value={editForm.password} onChange={handleEditProfileChange} className="w-full p-3 os-input rounded-xl text-xs" />
+                                                <label className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest ml-1 sm:ml-2">Password Baru (opsional)</label>
+                                                <input name="password" type="text" placeholder="Kosongkan jika tidak diubah" onChange={handleEditProfileChange} className="w-full p-2.5 sm:p-3 os-input rounded-lg sm:rounded-xl text-[10px] sm:text-xs placeholder:text-slate-600" />
                                             </div>
 
-                                            <div className="flex gap-2 mt-4">
-                                                <button onClick={() => setIsEditingProfile(false)} className="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl text-xs font-black uppercase tracking-widest">Batal</button>
-                                                <button onClick={saveProfileChanges} className="flex-1 btn-orange py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-xl">Simpan</button>
+                                            <div className="flex gap-2 mt-4 sm:mt-5">
+                                                <button onClick={() => setIsEditingProfile(false)} className="flex-1 bg-white/10 hover:bg-white/20 text-white py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest">Batal</button>
+                                                <button onClick={saveProfileChanges} className="flex-1 btn-orange py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-xl">Simpan</button>
                                             </div>
                                         </div>
                                     )}
                                     
-                                    {!isEditingProfile && <div className="mt-8"><img src={logoUrl} alt="Logo" className="h-10 opacity-30 mx-auto logo-hologram transform scale-[2.5]" /></div>}
+                                    {!isEditingProfile && <div className="mt-6 sm:mt-8"><img src={logoUrl} alt="Logo" className="h-10 w-10 sm:h-12 sm:w-12 object-contain opacity-20 mx-auto logo-hologram" /></div>}
                                 </div>
                             </div>
                         </div>
                     )}
 
                     {selectedLog && (
-                        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 modal-overlay animate-in" onClick={() => setSelectedLog(null)}>
-                            <div className="os-window w-full max-w-sm p-6 rounded-[2.5rem] relative border border-white/10 shadow-2xl" onClick={e => e.stopPropagation()}>
-                                <button onClick={() => setSelectedLog(null)} className="absolute top-4 right-4 text-slate-400 hover:text-white bg-black/50 w-8 h-8 rounded-full z-10"><i className="fas fa-times"></i></button>
-                                <div className="rounded-3xl overflow-hidden aspect-video bg-black border border-white/10 mb-6 shadow-2xl"><img src={selectedLog.photo} className="w-full h-full object-cover" alt="Verification" /></div>
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-end border-b border-white/5 pb-4">
-                                            <div><h4 className="text-orange-400 font-black text-xs uppercase tracking-widest mb-1">Tipe Aktifitas</h4><p className="text-white font-bold text-lg uppercase">{selectedLog.loc.includes('Hadir') ? 'MASUK KERJA' : (selectedLog.loc.includes('Pulang') ? 'PULANG KERJA' : (selectedLog.loc.toLowerCase().includes('khusus') ? 'PRESENSI KHUSUS' : 'IZIN PETUGAS'))}</p></div>
-                                            <div className="text-right"><span className="bg-emerald-500/20 text-emerald-400 text-[9px] font-black px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-tighter">Verified</span></div>
+                        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 modal-overlay animate-in" onClick={() => setSelectedLog(null)}>
+                            <div className="os-window w-full max-w-sm p-5 sm:p-6 rounded-3xl sm:rounded-[2.5rem] relative border border-white/10 shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar" onClick={e => e.stopPropagation()}>
+                                <button onClick={() => setSelectedLog(null)} className="absolute top-3 right-3 sm:top-4 sm:right-4 text-slate-400 hover:text-white bg-black/50 w-7 h-7 sm:w-8 sm:h-8 rounded-full z-10 flex items-center justify-center"><i className="fas fa-times text-xs sm:text-sm"></i></button>
+                                <div className="rounded-2xl sm:rounded-3xl overflow-hidden aspect-video bg-black border border-white/10 mb-4 sm:mb-6 shadow-2xl shrink-0"><img src={selectedLog.photo} className="w-full h-full object-cover" alt="Verification" /></div>
+                                <div className="space-y-3 sm:space-y-4">
+                                    <div className="flex justify-between items-end border-b border-white/5 pb-3 sm:pb-4">
+                                            <div><h4 className="text-orange-400 font-black text-[10px] sm:text-xs uppercase tracking-widest mb-0.5 sm:mb-1">Tipe Aktifitas</h4><p className="text-white font-bold text-sm sm:text-lg uppercase">{selectedLog.loc.includes('Hadir') ? 'MASUK KERJA' : (selectedLog.loc.includes('Pulang') ? 'PULANG KERJA' : (selectedLog.loc.toLowerCase().includes('khusus') ? 'PRESENSI KHUSUS' : 'IZIN PETUGAS'))}</p></div>
+                                            <div className="text-right"><span className="bg-emerald-500/20 text-emerald-400 text-[8px] sm:text-[9px] font-black px-2 sm:px-3 py-1 rounded-full border border-emerald-500/30 uppercase tracking-tighter">Verified</span></div>
                                     </div>
                                     {(selectedLog.loc || "").toLowerCase().includes('setengah hari') && (selectedLog.loc || "").match(/Setengah Hari\s*\(([^)]+)\)/i) && (
-                                        <div className="bg-amber-900/10 p-3 rounded-xl border border-amber-500/20 text-center">
-                                            <p className="text-[9px] text-amber-500 font-black uppercase tracking-widest mb-1">Durasi Kerja Setengah Hari</p>
-                                            <p className="text-lg font-mono font-bold text-amber-300"><i className="fas fa-clock mr-2"></i>{(selectedLog.loc || "").match(/Setengah Hari\s*\(([^)]+)\)/i)[1]}</p>
+                                        <div className="bg-amber-900/10 p-2.5 sm:p-3 rounded-xl border border-amber-500/20 text-center">
+                                            <p className="text-[8px] sm:text-[9px] text-amber-500 font-black uppercase tracking-widest mb-1">Durasi Kerja Setengah Hari</p>
+                                            <p className="text-base sm:text-lg font-mono font-bold text-amber-300"><i className="fas fa-clock mr-2"></i>{(selectedLog.loc || "").match(/Setengah Hari\s*\(([^)]+)\)/i)[1]}</p>
                                         </div>
                                     )}
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-white/5 p-4 rounded-2xl border border-white/5"><p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Waktu</p><p className="text-sm font-bold text-white font-mono">{selectedLog.time}</p></div>
-                                        <div className="bg-white/5 p-4 rounded-2xl border border-white/5"><p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Tanggal</p><p className="text-sm font-bold text-white font-mono">{selectedLog.date}</p></div>
+                                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                                        <div className="bg-white/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5"><p className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Waktu</p><p className="text-xs sm:text-sm font-bold text-white font-mono">{selectedLog.time}</p></div>
+                                        <div className="bg-white/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5"><p className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Tanggal</p><p className="text-xs sm:text-sm font-bold text-white font-mono">{selectedLog.date}</p></div>
                                     </div>
-                                    <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                                        <div className="flex justify-between items-center mb-2"><p className="text-[8px] font-black text-slate-500 uppercase tracking-widest"><i className="fas fa-map-marker-alt mr-1"></i> Data Keterangan & Lokasi</p><button onClick={() => openMap(selectedLog.loc)} className="text-[8px] font-bold text-blue-400 uppercase tracking-widest hover:text-white border border-blue-500/30 px-2 py-1 rounded-lg hover:bg-blue-600 transition-all"><i className="fas fa-external-link-alt mr-1"></i> LACAK LOKASI</button></div>
-                                        <div className="bg-black/40 p-3 rounded-xl border border-white/5">
-                                            <p className="text-[11px] text-slate-300 font-medium leading-relaxed italic">{formatLocationData(selectedLog.loc).address}</p>
-                                            <div className="flex flex-wrap gap-2 mt-2">
+                                    <div className="bg-white/5 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/5">
+                                        <div className="flex justify-between items-center mb-2"><p className="text-[7px] sm:text-[8px] font-black text-slate-500 uppercase tracking-widest"><i className="fas fa-map-marker-alt mr-1"></i> Lokasi/Catatan</p><button onClick={() => openMap(selectedLog.loc)} className="text-[7px] sm:text-[8px] font-bold text-blue-400 uppercase tracking-widest hover:text-white border border-blue-500/30 px-1.5 sm:px-2 py-1 rounded-md sm:rounded-lg hover:bg-blue-600 transition-all"><i className="fas fa-external-link-alt mr-1"></i> PETA</button></div>
+                                        <div className="bg-black/40 p-2.5 sm:p-3 rounded-lg sm:rounded-xl border border-white/5">
+                                            <p className="text-[9px] sm:text-[11px] text-slate-300 font-medium leading-relaxed italic break-words">{formatLocationData(selectedLog.loc).address}</p>
+                                            <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
                                                 {formatLocationData(selectedLog.loc).badges}
                                             </div>
                                         </div>
                                     </div>
                                     
                                     {selectedLog.loc.includes("Pulang") && (
-                                        <div className="bg-white/10 p-3 rounded-xl border border-white/10 mt-4 text-center">
-                                            <p className="text-[9px] text-slate-400 uppercase font-bold tracking-widest">Durasi Kerja</p>
-                                            <p className="text-lg text-orange-400 font-mono font-bold">{getWorkingDuration(selectedLog, dateSpecificLogs) || "Data Hadir Tidak Ditemukan"}</p>
+                                        <div className="bg-white/10 p-2.5 sm:p-3 rounded-lg sm:rounded-xl border border-white/10 mt-3 sm:mt-4 text-center">
+                                            <p className="text-[8px] sm:text-[9px] text-slate-400 uppercase font-bold tracking-widest mb-0.5">Durasi Kerja</p>
+                                            <p className="text-sm sm:text-lg text-orange-400 font-mono font-bold">{getWorkingDuration(selectedLog, dateSpecificLogs) || "Tidak Ditemukan"}</p>
                                         </div>
                                     )}
                                     
-                                    <button onClick={() => setSelectedLog(null)} className="w-full btn-orange py-3 rounded-xl text-[10px] uppercase font-black tracking-widest shadow-xl mt-2">TUTUP DETAIL</button>
+                                    <button onClick={() => setSelectedLog(null)} className="w-full btn-orange py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] uppercase font-black tracking-widest shadow-xl mt-2">TUTUP DETAIL</button>
                                 </div>
                             </div>
                         </div>
                     )}
-                    {isPhotoZoomOpen && (<div className="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay animate-in" onClick={() => setIsPhotoZoomOpen(false)}><div className="max-w-full max-h-full p-2 bg-white/10 rounded-3xl backdrop-blur-md shadow-2xl relative" onClick={e => e.stopPropagation()}><button onClick={() => setIsPhotoZoomOpen(false)} className="absolute -top-10 right-0 text-white text-3xl font-black">&times;</button><img src={currentUser.profilePic} className="max-w-[90vw] max-h-[80vh] rounded-2xl object-contain shadow-2xl border border-white/10" alt="Zoomed" /><div className="mt-4 text-center"><button onClick={() => setIsPhotoZoomOpen(false)} className="btn-orange px-10 py-3 rounded-xl text-[10px] uppercase font-black tracking-widest shadow-xl">Tutup Pratinjau</button></div></div></div>)}
+                    {isPhotoZoomOpen && (<div className="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay animate-in" onClick={() => setIsPhotoZoomOpen(false)}><div className="max-w-full max-h-full p-2 bg-white/10 rounded-2xl sm:rounded-3xl backdrop-blur-md shadow-2xl relative" onClick={e => e.stopPropagation()}><button onClick={() => setIsPhotoZoomOpen(false)} className="absolute -top-10 right-0 text-white text-2xl sm:text-3xl font-black">&times;</button><img src={currentUser.profilePic} className="max-w-[90vw] max-h-[80vh] rounded-xl sm:rounded-2xl object-contain shadow-2xl border border-white/10 bg-black" alt="Zoomed" /><div className="mt-3 sm:mt-4 text-center"><button onClick={() => setIsPhotoZoomOpen(false)} className="btn-orange px-8 sm:px-10 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] uppercase font-black tracking-widest shadow-xl">Tutup Pratinjau</button></div></div></div>)}
                     <canvas ref={canvasRef} className="hidden" />
                 </div>
             );
