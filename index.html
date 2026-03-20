@@ -1794,51 +1794,116 @@
 
                     {/* --- HALAMAN ATTENDANCE (PRESENSI) YANG SEBELUMNYA HILANG --- */}
                     {view === 'attendance' && (
-                        <div className="w-full max-w-md animate-in">
-                            <div className="os-window p-6 md:p-8 rounded-[2.5rem] border border-white/5 shadow-2xl relative">
-                                <button onClick={resetToDashboard} className="absolute top-5 left-5 text-slate-400 hover:text-white transition-colors z-10 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-black/40 px-3 py-1.5 rounded-full">
-                                    <i className="fas fa-arrow-left"></i> Kembali
+                        <div className="w-full max-w-md animate-in flex flex-col gap-6 pb-20">
+                            <div className="flex justify-between items-center px-4">
+                                <button onClick={resetToDashboard} className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 shadow-lg active:scale-90 hover:bg-white/10 transition-colors">
+                                    <i className="fas fa-arrow-left"></i>
                                 </button>
-
-                                <h2 className="text-2xl font-black mb-6 text-center text-white uppercase tracking-widest mt-8">
-                                    Presensi <span className="text-orange-500">{presenceType}</span>
-                                </h2>
-                                {selectedShift && presenceType !== 'Izin' && (
-                                    <p className="text-center text-orange-400 text-[10px] font-black uppercase tracking-widest mb-4 bg-orange-500/10 py-1.5 rounded-lg border border-orange-500/20">{selectedShift}</p>
-                                )}
-
-                                {/* Bagian Kamera */}
-                                <div className="mb-6 relative">
-                                    <div className="video-container shadow-2xl bg-black flex items-center justify-center relative overflow-hidden rounded-2xl border border-white/10">
-                                        {!cameraFailed && !fallbackImage ? (
-                                            <>
-                                                <video ref={videoRef} id="video-element" autoPlay playsInline muted className="w-full h-full object-cover"></video>
-                                                {isRequestingCamera && <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-10"><div className="loader mb-2 border-black/20 border-t-orange-500"></div><span className="text-xs text-orange-400 font-bold uppercase tracking-widest">Akses Kamera...</span></div>}
-                                            </>
-                                        ) : fallbackImage ? (
-                                            <img src={fallbackImage} alt="Fallback" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="text-center p-6 bg-rose-900/20 text-rose-400 flex flex-col items-center justify-center w-full h-full">
-                                                <i className="fas fa-exclamation-triangle text-3xl mb-3"></i>
-                                                <p className="text-xs font-bold mb-4">{cameraErrorMsg || "Kamera tidak tersedia."}</p>
-                                                <label className="cursor-pointer bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl text-white text-[10px] font-black uppercase tracking-widest transition-all border border-white/20">
-                                                    <i className="fas fa-upload mr-2"></i>Ambil Foto Manual
-                                                    <input type="file" accept="image/*" capture="user" onChange={handleNativeCamera} className="hidden" />
-                                                </label>
-                                            </div>
-                                        )}
-                                        {!cameraFailed && !fallbackImage && (
-                                            <div className="absolute inset-0 pointer-events-none border-[2px] border-dashed border-white/30 m-6 rounded-3xl"></div>
-                                        )}
+                                <div className="text-center">
+                                    <h3 className="text-white font-black uppercase text-xs tracking-widest">Sistem Presensi</h3>
+                                    <p className="text-[10px] text-orange-gradient font-black uppercase tracking-[0.2em]">{selectedDuration} • {presenceType}</p>
+                                    {/* INDIKATOR STATUS UNLOCK */}
+                                    <div className={`mt-1 text-[8px] font-mono px-2 py-0.5 rounded border inline-block ${currentUser?.bypassGeo ? 'bg-emerald-900/50 border-emerald-500 text-emerald-400' : 'bg-rose-900/50 border-rose-500 text-rose-400'}`}>
+                                        STATUS GEMBOK: {currentUser?.bypassGeo ? "TERBUKA (UNLOCK)" : "TERTUTUP (LOCK)"}
                                     </div>
-                                    {!cameraFailed && !fallbackImage && (
-                                        <p className="text-[9px] text-slate-400 text-center mt-2 uppercase tracking-widest font-bold"><i className="fas fa-info-circle mr-1 text-orange-400"></i> Pastikan wajah dan lokasi terlihat jelas</p>
+                                </div>
+                                <div className="w-10"></div>
+                            </div>
+
+                            <div className="os-window p-6 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-24 bg-orange-500/5 blur-[60px] rounded-full pointer-events-none"></div>
+                                
+                                {/* Bagian Kamera */}
+                                <div className="video-container mb-6 shadow-2xl bg-black flex items-center justify-center relative overflow-hidden rounded-2xl border border-white/10 ring-1 ring-white/10">
+                                    
+                                    {/* OVERLAY LOADING SAAT MEMINTA IZIN KAMERA */}
+                                    {isRequestingCamera && (
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 z-20 animate-in">
+                                            <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                                            <p className="text-white text-[10px] font-black tracking-widest uppercase animate-pulse">Menunggu Izin Kamera...</p>
+                                            <p className="text-emerald-400 text-[8px] mt-2 uppercase font-bold text-center px-4">Silahkan klik "Allow/Izinkan" pada pop-up browser Anda</p>
+                                        </div>
+                                    )}
+
+                                    {!cameraFailed ? (
+                                        <video ref={videoRef} id="video-element" autoPlay playsInline muted className="w-full h-full object-cover transform scale-x-[-1]"></video>
+                                    ) : fallbackImage ? (
+                                        <img src={fallbackImage} className="w-full h-full object-cover transform scale-x-[-1]" alt="Captured" />
+                                    ) : (
+                                        <div className="w-full h-full flex flex-col items-center justify-center bg-black/80 p-4 text-center z-10 relative">
+                                            <i className="fas fa-video-slash text-rose-500 text-4xl mb-3"></i>
+                                            <p className="text-[10px] text-white font-black mb-1 uppercase tracking-widest">AKSES LIVE KAMERA GAGAL</p>
+                                            <p className="text-[8px] text-rose-300 mb-5 px-2 leading-relaxed">{cameraErrorMsg}</p>
+                                            
+                                            {/* Tombol Utama: Paksa Coba Lagi Live Camera */}
+                                            <button onClick={startCamera} className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-transform mb-3 w-full max-w-[220px]">
+                                                <i className="fas fa-sync-alt mr-2"></i> IZINKAN & COBA LAGI
+                                            </button>
+
+                                            <div className="w-full max-w-[220px] flex items-center justify-center gap-2 mb-3 opacity-40">
+                                                <div className="h-px bg-white flex-1"></div>
+                                                <span className="text-[7px] text-white uppercase font-bold tracking-widest">ATAU (JIKA TETAP GAGAL)</span>
+                                                <div className="h-px bg-white flex-1"></div>
+                                            </div>
+
+                                            {/* Tombol Alternatif Terakhir: Kamera Bawaan HP */}
+                                            <label className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-5 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest cursor-pointer shadow-lg active:scale-95 transition-transform w-full max-w-[220px] text-center block">
+                                                <i className="fas fa-camera mr-2"></i> BUKA KAMERA BAWAAN
+                                                <input type="file" accept="image/*" capture="user" className="hidden" onChange={handleNativeCamera} />
+                                            </label>
+                                        </div>
+                                    )}
+
+                                    {/* OVERLAYS UI (HUD) - ONLY SHOW IF NOT FAILED AND NOT FALLBACK */}
+                                    {(!cameraFailed || fallbackImage) && (
+                                        <>
+                                            <div className="absolute inset-0 border-[4px] border-white/10 rounded-[1.3rem] pointer-events-none z-20"></div>
+                                            
+                                            <div className="absolute top-4 left-4 flex flex-col gap-1.5 z-30 pointer-events-none">
+                                                <div className={`bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2 ${isOutOfRange ? 'text-rose-400' : 'text-emerald-400'}`}>
+                                                    <i className="fas fa-satellite-dish text-[10px]"></i>
+                                                    <span className="text-[9px] font-black tracking-widest uppercase">
+                                                        {distanceToTarget !== null ? `${distanceToTarget.toFixed(3)} KM` : 'Locating...'}
+                                                    </span>
+                                                </div>
+                                                <div className={`bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2 ${isGpsPoor ? 'text-amber-400' : 'text-blue-400'}`}>
+                                                    <i className="fas fa-crosshairs text-[10px]"></i>
+                                                    <span className="text-[9px] font-black tracking-widest uppercase">
+                                                        Acc: {coords.accuracy ? Math.round(coords.accuracy) : '--'}M
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className="absolute top-4 right-4 z-30 pointer-events-none">
+                                                <div className="bg-emerald-600/90 px-2.5 py-1 rounded-md flex items-center gap-2 shadow-lg border border-emerald-400/50">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></div>
+                                                    <span className="text-[8px] text-white font-black uppercase tracking-tighter">System Online</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none opacity-20">
+                                                <p className="text-white font-black text-4xl uppercase tracking-[0.5em] select-none">DPPI</p>
+                                            </div>
+
+                                            <div className="absolute bottom-4 left-4 right-4 z-30 pointer-events-none flex justify-between items-end">
+                                                <div className="bg-black/60 backdrop-blur-md px-3 py-2 rounded-xl border border-white/10 shadow-lg">
+                                                    <p className="text-[7px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Coordinates</p>
+                                                    <p className="text-[9px] text-white font-mono font-black tracking-tighter leading-none">
+                                                        {coords.lat ? coords.lat.toFixed(6) : '--.------'}, {coords.lng ? coords.lng.toFixed(6) : '--.------'}
+                                                    </p>
+                                                </div>
+                                                <div className="bg-rose-600/80 px-2 py-0.5 rounded-md flex items-center gap-1.5 border border-rose-400/40">
+                                                    <div className="w-1 h-1 rounded-full bg-white"></div>
+                                                    <span className="text-[7px] text-white font-black uppercase">Live</span>
+                                                </div>
+                                            </div>
+                                        </>
                                     )}
                                 </div>
 
                                 {/* Bagian Peta GPS */}
                                 {presenceType !== 'Izin' && (
-                                    <div className="mb-6">
+                                    <div className="mb-6 animate-in">
                                         <div className="flex justify-between items-center mb-2">
                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest"><i className="fas fa-map-marker-alt text-orange-500 mr-1"></i> Lokasi GPS</p>
                                             <button onClick={handleRefreshGPS} className="text-[9px] bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded font-bold uppercase tracking-wider transition-colors border border-white/10"><i className="fas fa-sync-alt mr-1"></i>Refresh</button>
@@ -1851,10 +1916,6 @@
                                         ) : (
                                             <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-lg bg-slate-900">
                                                 <div id="user-map" className="w-full h-[150px]"></div>
-                                                <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-md px-3 py-2 rounded-lg border border-white/10 z-[400] flex flex-col gap-1 text-right shadow-xl pointer-events-none">
-                                                    <div className="text-[9px] font-black uppercase text-slate-300">Akurasi: <span className={coords.accuracy > 100 ? 'text-rose-400' : 'text-emerald-400'}>{coords.accuracy ? Math.round(coords.accuracy) + 'm' : '...'}</span></div>
-                                                    <div className="text-[9px] font-black uppercase text-slate-300">Jarak: <span className={distanceToTarget > 0.5 && !currentUser?.bypassGeo ? 'text-amber-400' : 'text-blue-400'}>{distanceToTarget ? distanceToTarget.toFixed(2) + ' km' : '...'}</span></div>
-                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -1863,8 +1924,10 @@
                                 {/* Input Keterangan / Alasan */}
                                 {(presenceType === 'Izin' || selectedDuration === 'Khusus' || selectedDuration === 'Ekstra') && (
                                     <div className="mb-6">
-                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
-                                            {presenceType === 'Izin' ? 'Alasan Izin' : `Detail Tugas ${selectedDuration}`} <span className="text-rose-500">*</span>
+                                        <label className="text-[10px] font-black uppercase tracking-widest ml-2 flex items-center gap-2 mb-2">
+                                            <span className={selectedDuration === 'Khusus' ? 'text-cyan-400' : (selectedDuration === 'Ekstra' ? 'text-orange-400' : 'text-purple-400')}>
+                                                {presenceType === 'Izin' ? 'Alasan Izin' : `Detail Tugas ${selectedDuration}`} <span className="text-rose-500">*</span>
+                                            </span>
                                         </label>
                                         <textarea
                                             value={permitReason}
@@ -1892,16 +1955,16 @@
                                 <button
                                     onClick={doAbsen}
                                     disabled={isLoading || (presenceType !== 'Izin' && isLocationMissing)}
-                                    className={`w-full py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-2xl flex items-center justify-center gap-2 ${
-                                        isLoading || (presenceType !== 'Izin' && isLocationMissing) ? 'btn-disabled opacity-50 cursor-not-allowed' : 'btn-orange hover:scale-[1.02]'
+                                    className={`w-full py-5 rounded-2xl text-xs font-black uppercase tracking-[0.3em] transition-all shadow-2xl flex items-center justify-center gap-3 ${
+                                        isLoading || (presenceType !== 'Izin' && isLocationMissing) ? 'btn-disabled opacity-50 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/20 active:scale-95'
                                     }`}
                                 >
                                     {isLoading ? (
-                                        <><div className="loader border-black/20 border-t-black w-4 h-4 border-2"></div> MENGIRIM DATA...</>
+                                        <div className="loader"></div>
                                     ) : (presenceType !== 'Izin' && isLocationMissing) ? (
-                                        <><i className="fas fa-location-crosshairs animate-spin text-orange-400"></i> MENCARI LOKASI GPS...</>
+                                        <><i className="fas fa-location-crosshairs animate-spin text-orange-400 text-lg"></i> MENCARI LOKASI...</>
                                     ) : (
-                                        <><i className="fas fa-fingerprint"></i> KONFIRMASI {presenceType}</>
+                                        <><i className={`fas fa-${isOutOfRange ? 'times-circle' : 'fingerprint'} text-lg`}></i> {isOutOfRange ? 'OUT OF RADIUS' : 'SUBMIT PRESENSI'}</>
                                     )}
                                 </button>
                             </div>
